@@ -723,7 +723,17 @@ Body:
             {/* Add New Key Form */}
             {savedApiKeys.length < 5 ? (
               <div className="space-y-3 pt-3 border-t border-border/20">
-                <span className="text-[9px] text-text-muted">// REGISTER_NEW_KEY</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] text-text-muted">// REGISTER_NEW_KEY</span>
+                  <a
+                    href="https://firecrawl.dev/app/api-keys"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[9px] text-primary underline flex items-center gap-0.5 hover:text-white"
+                  >
+                    {lang === "en" ? "Get Firecrawl Key" : "Dapatkan Kunci"} <Globe size={8} />
+                  </a>
+                </div>
                 <div className="space-y-2 text-[10px]">
                   <input
                     type="text"
@@ -979,6 +989,17 @@ Body:
                   </div>
                 )}
                 <p className="text-[9px] text-text-muted font-sans mt-1">{t.apiKeyHint}</p>
+                <div className="mt-2.5">
+                  <a
+                    href="https://firecrawl.dev/app/api-keys"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-1.5 rounded border border-accent/30 bg-accent/5 hover:bg-accent/15 text-accent text-[9px] font-bold font-mono transition-colors flex items-center justify-center gap-1 focus:outline-none"
+                  >
+                    <Globe size={10} />
+                    <span>{lang === "en" ? "OBTAIN FIRECRAWL API KEY" : "AMBIL API KEY FIRECRAWL"}</span>
+                  </a>
+                </div>
               </div>
 
               {/* Target URL Input (Digunakan untuk semua kecuali search) */}
