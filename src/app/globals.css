@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definisi 5 Tema Warna Sejajar */
+:root[data-theme="crimson-core"] {
+  --lc-primary: #C81E3A;
+  --lc-primary-rgb: 200, 30, 58;
+  --lc-accent: #D4AF37;
+  --lc-accent-rgb: 212, 175, 55;
+  --lc-bg: #0A0A0C;
+  --lc-bg-elevated: #141417;
+  --lc-text: #F5F1E8;
+  --lc-text-muted: #9A9A9F;
+  --lc-border: rgba(212, 175, 55, 0.18);
+  --lc-glow: 0 0 40px rgba(200, 30, 58, 0.35);
+}
+
+:root[data-theme="blaze-orange"] {
+  --lc-primary: #FF6A1A;
+  --lc-primary-rgb: 255, 106, 26;
+  --lc-accent: #FFB347;
+  --lc-accent-rgb: 255, 179, 71;
+  --lc-bg: #0D0B08;
+  --lc-bg-elevated: #17130F;
+  --lc-text: #FAF8F5;
+  --lc-text-muted: #A39E95;
+  --lc-border: rgba(255, 179, 71, 0.18);
+  --lc-glow: 0 0 40px rgba(255, 106, 26, 0.35);
+}
+
+:root[data-theme="verdant-mint"] {
+  --lc-primary: #4ADE80;
+  --lc-primary-rgb: 74, 222, 128;
+  --lc-accent: #A7F3D0;
+  --lc-accent-rgb: 167, 243, 208;
+  --lc-bg: #07100C;
+  --lc-bg-elevated: #0F1A15;
+  --lc-text: #F0FAF5;
+  --lc-text-muted: #94A89E;
+  --lc-border: rgba(167, 243, 208, 0.18);
+  --lc-glow: 0 0 40px rgba(74, 222, 128, 0.35);
+}
+
+:root[data-theme="neon-rose"] {
+  --lc-primary: #FF2E88;
+  --lc-primary-rgb: 255, 46, 136;
+  --lc-accent: #FFA6D2;
+  --lc-accent-rgb: 255, 166, 210;
+  --lc-bg: #120810;
+  --lc-bg-elevated: #1D101C;
+  --lc-text: #FBF5FA;
+  --lc-text-muted: #A899A6;
+  --lc-border: rgba(255, 166, 210, 0.18);
+  --lc-glow: 0 0 40px rgba(255, 46, 136, 0.35);
+}
+
+:root[data-theme="pure-red"] {
+  --lc-primary: #E11D2E;
+  --lc-primary-rgb: 225, 29, 46;
+  --lc-accent: #FF7A7A;
+  --lc-accent-rgb: 255, 122, 122;
+  --lc-bg: #0B0505;
+  --lc-bg-elevated: #150C0C;
+  --lc-text: #FDF7F7;
+  --lc-text-muted: #A79797;
+  --lc-border: rgba(255, 122, 122, 0.18);
+  --lc-glow: 0 0 40px rgba(225, 29, 46, 0.35);
+}
+
+/* Fallback default theme (Crimson Core) jika belum ada di localStorage */
+:root {
+  --lc-primary: #C81E3A;
+  --lc-primary-rgb: 200, 30, 58;
+  --lc-accent: #D4AF37;
+  --lc-accent-rgb: 212, 175, 55;
+  --lc-bg: #0A0A0C;
+  --lc-bg-elevated: #141417;
+  --lc-text: #F5F1E8;
+  --lc-text-muted: #9A9A9F;
+  --lc-border: rgba(212, 175, 55, 0.18);
+  --lc-glow: 0 0 40px rgba(200, 30, 58, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--lc-text);
+  background-color: var(--lc-bg);
+  font-family: var(--font-space-grotesk), "Inter", sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.6s ease, color 0.4s ease, border-color 0.4s ease;
+  position: relative;
+}
+
+/* Background Noise Texture */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Scanline Effect */
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--lc-primary-rgb), 0) 0%,
+    rgba(var(--lc-primary-rgb), 0.15) 50%,
+    rgba(var(--lc-primary-rgb), 0) 100%
+  );
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 9998;
+  animation: scanline-sweep 6s linear infinite;
+}
+
+/* Grid Background */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(var(--lc-primary-rgb), 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--lc-primary-rgb), 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+}
+
+/* Spotlight radial gradient */
+.spotlight {
+  background: radial-gradient(
+    600px circle at var(--x, 50%) var(--y, 50%),
+    rgba(var(--lc-primary-rgb), 0.12),
+    transparent 80%
+  );
+  pointer-events: none;
+}
+
+/* Corner Bracket CSS Decorator */
+.corner-brackets::before,
+.corner-brackets::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--lc-accent);
+  border-style: solid;
+  opacity: 0.6;
+}
+
+.corner-brackets::before {
+  top: -2px;
+  left: -2px;
+  border-width: 2px 0 0 2px;
+}
+
+.corner-brackets::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2px 2px 0;
+}
+
+.corner-brackets-top-right::before {
+  top: -2px;
+  right: -2px;
+  border-width: 2px 2px 0 0;
+  border-color: var(--lc-accent);
+  border-style: solid;
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0.6;
+}
+
+.corner-brackets-bottom-left::before {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 2px 2px;
+  border-color: var(--lc-accent);
+  border-style: solid;
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0.6;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lc-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--lc-primary-rgb), 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--lc-primary-rgb), 0.6);
+}
+
+/* Theme Shift Overlay Scanline Sweep Flash */
+@keyframes flash-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.theme-flash-active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--lc-primary);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 10000;
+  animation: flash 0.15s ease-out forwards;
+}
+
+@keyframes flash {
+  0% { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+.theme-sweep-active {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 200px;
+  background: linear-gradient(to right, transparent, rgba(var(--lc-primary-rgb), 0.5), transparent);
+  pointer-events: none;
+  z-index: 10001;
+  animation: sweep 0.5s ease-out forwards;
+}
+
+@keyframes sweep {
+  0% { left: -200px; }
+  100% { left: 100vw; }
+}
+
+/* Custom selection */
+::selection {
+  background: rgba(var(--lc-primary-rgb), 0.3);
+  color: var(--lc-text);
+}
