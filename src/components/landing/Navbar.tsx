@@ -96,7 +96,6 @@ export default function Navbar() {
           </div>
 
           <Link href="/playground" className="text-gray-300 hover:text-white transition-colors">Playground</Link>
-          <Link href="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link>
           <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">Docs</Link>
           <Link href="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
         </nav>
@@ -151,7 +150,6 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-bg-elevated border-b border-border absolute left-0 w-full px-4 py-6 flex flex-col gap-4 z-40 transition-all duration-300 font-mono text-xs">
           <Link href="/playground" className="text-gray-300 hover:text-white text-base py-1">Playground</Link>
-          <Link href="/pricing" className="text-gray-300 hover:text-white text-base py-1">Pricing</Link>
           <Link href="/docs" className="text-gray-300 hover:text-white text-base py-1">Documentation</Link>
           <Link href="/about" className="text-gray-300 hover:text-white text-base py-1">About LeanianStudio</Link>
           

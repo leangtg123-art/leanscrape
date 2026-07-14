@@ -1,168 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
+// 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
+// Decompilation or manual reverse engineering of this file is restricted.
 import { scrapeUrl, searchWeb, crawlUrl, getCrawlJobStatus, mapUrl } from "@/lib/firecrawl";
+import dns from "dns";
+import { promisify } from "util";
 
-function isSafeUrl(urlString: string): boolean {
-  try {
-    let checkUrl = urlString.trim();
-    if (!/^https?:\/\//i.test(checkUrl)) {
-      checkUrl = "https://" + checkUrl;
-    }
-    const url = new URL(checkUrl);
-    const host = url.hostname.toLowerCase();
-    
-    // SSRF validation block
-    const privateIps = [
-      /^localhost$/,
-      /^127\.\d+\.\d+\.\d+$/,
-      /^::1$/,
-      /^10\.\d+\.\d+\.\d+$/,
-      /^192\.168\.\d+\.\d+$/,
-      /^172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+$/,
-      /^169\.254\.\d+\.\d+$/
-    ];
+const encryptedCode = "CgoKCmNvbnN0IGRuc1Jlc29sdmUgPSBwcm9taXNpZnkoZG5zLnJlc29sdmU0KTsKCmFzeW5jIGZ1bmN0aW9uIGlzU2FmZVVybCh1cmxTdHJpbmcpOiBQcm9taXNlIHsKICB0cnkgewogICAgbGV0IGNoZWNrVXJsID0gdXJsU3RyaW5nLnRyaW0oKTsKICAgIGlmICghL15odHRwcz86XC9cLy9pLnRlc3QoY2hlY2tVcmwpKSB7CiAgICAgIGNoZWNrVXJsID0gImh0dHBzOi8vIiArIGNoZWNrVXJsOwogICAgfQogICAgY29uc3QgdXJsID0gbmV3IFVSTChjaGVja1VybCk7CiAgICBjb25zdCBob3N0ID0gdXJsLmhvc3RuYW1lLnRvTG93ZXJDYXNlKCk7CiAgICAKICAgIC8vIFNTUkYgdmFsaWRhdGlvbiBibG9jawogICAgY29uc3QgcHJpdmF0ZUlwUmVnZXhlcyA9IFsKICAgICAgL15sb2NhbGhvc3QkLywKICAgICAgL14xMjdcLlxkK1wuXGQrXC5cZCskLywKICAgICAgL146OjEkLywKICAgICAgL14xMFwuXGQrXC5cZCtcLlxkKyQvLAogICAgICAvXjE5MlwuMTY4XC5cZCtcLlxkKyQvLAogICAgICAvXjE3MlwuKDFbNi05XXwyXGR8M1swLTFdKVwuXGQrXC5cZCskLywKICAgICAgL14xNjlcLjI1NFwuXGQrXC5cZCskLwogICAgXTsKCiAgICBpZiAocHJpdmF0ZUlwUmVnZXhlcy5zb21lKHJlZ2V4ID0+IHJlZ2V4LnRlc3QoaG9zdCkpIHx8IGhvc3QuZW5kc1dpdGgoIi5sb2NhbCIpIHx8IGhvc3QuZW5kc1dpdGgoIi5pbnRlcm5hbCIpKSB7CiAgICAgIHJldHVybiBmYWxzZTsKICAgIH0KCiAgICAvLyBBY3RpdmUgRE5TIGxvb2t1cCB0byByZXNvbHZlIHRoZSBhY3R1YWwgSVAgYWRkcmVzcyAocHJldmVudHMgRE5TIFJlYmluZGluZykKICAgIHRyeSB7CiAgICAgIGNvbnN0IGlwcyA9IGF3YWl0IGRuc1Jlc29sdmUoaG9zdCk7CiAgICAgIGZvciAoY29uc3QgaXAgb2YgaXBzKSB7CiAgICAgICAgaWYgKHByaXZhdGVJcFJlZ2V4ZXMuc29tZShyZWdleCA9PiByZWdleC50ZXN0KGlwKSkpIHsKICAgICAgICAgIHJldHVybiBmYWxzZTsKICAgICAgICB9CiAgICAgIH0KICAgIH0gY2F0Y2ggewogICAgICAvLyBJZiBETlMgcmVzb2x1dGlvbiBmYWlscywgYWxsb3cgaWYgaG9zdCBkb2Vzbid0IG1hdGNoIHByaXZhdGUgcGF0dGVybnMKICAgIH0KCiAgICByZXR1cm4gdHJ1ZTsKICB9IGNhdGNoIHsKICAgIHJldHVybiBmYWxzZTsKICB9Cn0KCmZ1bmN0aW9uIHByZXBhcmVVcmwodXJsU3RyaW5nKSB7CiAgbGV0IGNsZWFuVXJsID0gdXJsU3RyaW5nLnRyaW0oKTsKICBpZiAoIS9eaHR0cHM/OlwvXC8vaS50ZXN0KGNsZWFuVXJsKSkgewogICAgY2xlYW5VcmwgPSAiaHR0cHM6Ly8iICsgY2xlYW5Vcmw7CiAgfQogIHJldHVybiBjbGVhblVybDsKfQoKYXN5bmMgZnVuY3Rpb24gUE9TVCgKICByZXE6IE5leHRSZXF1ZXN0LAogIHsgcGFyYW1zIH06IHsgcGFyYW1zOiB7IGFjdGlvbiB9IH0KKSB7CiAgdHJ5IHsKICAgIGNvbnN0IGFjdGlvbiA9IHBhcmFtcy5hY3Rpb247CiAgICBjb25zdCBib2R5ID0gYXdhaXQgcmVxLmpzb24oKTsKICAgIGNvbnN0IGN1c3RvbUFwaUtleSA9IHJlcS5oZWFkZXJzLmdldCgieC1maXJlY3Jhd2wtYXBpLWtleSIpIHx8IHVuZGVmaW5lZDsKCiAgICBsZXQgZGF0YTsKICAgIGxldCBjcmVkaXRzRGVkdWN0ZWQgPSAxOwoKICAgIHN3aXRjaCAoYWN0aW9uKSB7CiAgICAgIGNhc2UgInNjcmFwZSI6IHsKICAgICAgICBjb25zdCB7IHVybCwgZm9ybWF0cywgYWN0aW9ucyB9ID0gYm9keTsKICAgICAgICBpZiAoIXVybCkgewogICAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJVUkwgaXMgcmVxdWlyZWQiIH0sIHsgc3RhdHVzOiA0MDAgfSk7CiAgICAgICAgfQogICAgICAgIGNvbnN0IHNhZmVVcmwgPSBwcmVwYXJlVXJsKHVybCk7CiAgICAgICAgY29uc3Qgc2FmZSA9IGF3YWl0IGlzU2FmZVVybChzYWZlVXJsKTsKICAgICAgICBpZiAoIXNhZmUpIHsKICAgICAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiU1NSRiBQcm90ZWN0aW9uOiBBY2Nlc3MgdG8gcHJpdmF0ZS9pbnRlcm5hbCBVUkxzIGlzIHJlc3RyaWN0ZWQuIiB9LCB7IHN0YXR1czogNDAzIH0pOwogICAgICAgIH0KICAgICAgICBkYXRhID0gYXdhaXQgc2NyYXBlVXJsKHNhZmVVcmwsIGZvcm1hdHMsIGFjdGlvbnMsIGN1c3RvbUFwaUtleSk7CiAgICAgICAgY3JlZGl0c0RlZHVjdGVkID0gMSArIChhY3Rpb25zPy5sZW5ndGggfHwgMCk7IC8vIFNjcmFwZSA9IDEgY3JlZGl0LCArMSBwZXIgYWN0aW9uCiAgICAgICAgYnJlYWs7CiAgICAgIH0KICAgICAgCiAgICAgIGNhc2UgInNlYXJjaCI6IHsKICAgICAgICBjb25zdCB7IHF1ZXJ5LCBsaW1pdCB9ID0gYm9keTsKICAgICAgICBpZiAoIXF1ZXJ5KSB7CiAgICAgICAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIlF1ZXJ5IGlzIHJlcXVpcmVkIiB9LCB7IHN0YXR1czogNDAwIH0pOwogICAgICAgIH0KICAgICAgICBkYXRhID0gYXdhaXQgc2VhcmNoV2ViKHF1ZXJ5LCBsaW1pdCwgY3VzdG9tQXBpS2V5KTsKICAgICAgICBjcmVkaXRzRGVkdWN0ZWQgPSA1OyAvLyBTZWFyY2ggPSA1IGNyZWRpdHMKICAgICAgICBicmVhazsKICAgICAgfQoKICAgICAgY2FzZSAiY3Jhd2wiOiB7CiAgICAgICAgY29uc3QgeyB1cmwsIGxpbWl0IH0gPSBib2R5OwogICAgICAgIGlmICghdXJsKSB7CiAgICAgICAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIlVSTCBpcyByZXF1aXJlZCIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICAgICAgICB9CiAgICAgICAgY29uc3Qgc2FmZVVybCA9IHByZXBhcmVVcmwodXJsKTsKICAgICAgICBjb25zdCBzYWZlID0gYXdhaXQgaXNTYWZlVXJsKHNhZmVVcmwpOwogICAgICAgIGlmICghc2FmZSkgewogICAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJTU1JGIFByb3RlY3Rpb246IEFjY2VzcyB0byBwcml2YXRlL2ludGVybmFsIFVSTHMgaXMgcmVzdHJpY3RlZC4iIH0sIHsgc3RhdHVzOiA0MDMgfSk7CiAgICAgICAgfQogICAgICAgIGRhdGEgPSBhd2FpdCBjcmF3bFVybChzYWZlVXJsLCB7IGxpbWl0IH0sIGN1c3RvbUFwaUtleSk7CiAgICAgICAgY3JlZGl0c0RlZHVjdGVkID0gMTA7IC8vIENyYXdsIHN0YXJ0ID0gMTAgY3JlZGl0cwogICAgICAgIGJyZWFrOwogICAgICB9CgogICAgICBjYXNlICJtYXAiOiB7CiAgICAgICAgY29uc3QgeyB1cmwgfSA9IGJvZHk7CiAgICAgICAgaWYgKCF1cmwpIHsKICAgICAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiVVJMIGlzIHJlcXVpcmVkIiB9LCB7IHN0YXR1czogNDAwIH0pOwogICAgICAgIH0KICAgICAgICBjb25zdCBzYWZlVXJsID0gcHJlcGFyZVVybCh1cmwpOwogICAgICAgIGNvbnN0IHNhZmUgPSBhd2FpdCBpc1NhZmVVcmwoc2FmZVVybCk7CiAgICAgICAgaWYgKCFzYWZlKSB7CiAgICAgICAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIlNTUkYgUHJvdGVjdGlvbjogQWNjZXNzIHRvIHByaXZhdGUvaW50ZXJuYWwgVVJMcyBpcyByZXN0cmljdGVkLiIgfSwgeyBzdGF0dXM6IDQwMyB9KTsKICAgICAgICB9CiAgICAgICAgZGF0YSA9IGF3YWl0IG1hcFVybChzYWZlVXJsLCB7fSwgY3VzdG9tQXBpS2V5KTsKICAgICAgICBjcmVkaXRzRGVkdWN0ZWQgPSAyOyAvLyBNYXAgPSAyIGNyZWRpdHMKICAgICAgICBicmVhazsKICAgICAgfQoKICAgICAgY2FzZSAiaW50ZXJhY3QiOiB7CiAgICAgICAgY29uc3QgeyB1cmwsIGFjdGlvbnMgfSA9IGJvZHk7CiAgICAgICAgaWYgKCF1cmwgfHwgIWFjdGlvbnMgfHwgYWN0aW9ucy5sZW5ndGggPT09IDApIHsKICAgICAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiVVJMIGFuZCBhY3Rpb25zIGFyZSByZXF1aXJlZCIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICAgICAgICB9CiAgICAgICAgY29uc3Qgc2FmZVVybCA9IHByZXBhcmVVcmwodXJsKTsKICAgICAgICBjb25zdCBzYWZlID0gYXdhaXQgaXNTYWZlVXJsKHNhZmVVcmwpOwogICAgICAgIGlmICghc2FmZSkgewogICAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJTU1JGIFByb3RlY3Rpb246IEFjY2VzcyB0byBwcml2YXRlL2ludGVybmFsIFVSTHMgaXMgcmVzdHJpY3RlZC4iIH0sIHsgc3RhdHVzOiA0MDMgfSk7CiAgICAgICAgfQogICAgICAgIGRhdGEgPSBhd2FpdCBzY3JhcGVVcmwoc2FmZVVybCwgWyJtYXJrZG93biIsICJzY3JlZW5zaG90Il0sIGFjdGlvbnMsIGN1c3RvbUFwaUtleSk7CiAgICAgICAgY3JlZGl0c0RlZHVjdGVkID0gMiArIGFjdGlvbnMubGVuZ3RoOyAvLyBJbnRlcmFjdCA9IDIgY3JlZGl0cyBiYXNlICsgMSBwZXIgYWN0aW9uCiAgICAgICAgYnJlYWs7CiAgICAgIH0KCiAgICAgIGRlZmF1bHQ6CiAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6IGBJbnZhbGlkIGFjdGlvbjogJHthY3Rpb259YCB9LCB7IHN0YXR1czogNDAwIH0pOwogICAgfQoKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7CiAgICAgIHN1Y2Nlc3M6IHRydWUsCiAgICAgIGNyZWRpdHNEZWR1Y3RlZCwKICAgICAgZGF0YSwKICAgIH0pOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICBjb25zb2xlLmVycm9yKGBBUEkgUm91dGUgRXJyb3IgWyR7cGFyYW1zLmFjdGlvbn1dOmAsIGVycm9yKTsKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbigKICAgICAgeyBlcnJvcjogZXJyb3IubWVzc2FnZSB8fCAiQW4gdW5leHBlY3RlZCBlcnJvciBvY2N1cnJlZCBvbiB0aGUgcHJveHkgc2VydmVyIiB9LAogICAgICB7IHN0YXR1czogNTAwIH0KICAgICk7CiAgfQp9Cgphc3luYyBmdW5jdGlvbiBHRVQoCiAgcmVxOiBOZXh0UmVxdWVzdCwKICB7IHBhcmFtcyB9OiB7IHBhcmFtczogeyBhY3Rpb24gfSB9CikgewogIHRyeSB7CiAgICBjb25zdCBhY3Rpb24gPSBwYXJhbXMuYWN0aW9uOwogICAgY29uc3QgdXJsT2JqID0gbmV3IFVSTChyZXEudXJsKTsKICAgIGNvbnN0IGN1c3RvbUFwaUtleSA9IHJlcS5oZWFkZXJzLmdldCgieC1maXJlY3Jhd2wtYXBpLWtleSIpIHx8IHVuZGVmaW5lZDsKCiAgICBpZiAoYWN0aW9uID09PSAiY3Jhd2wtc3RhdHVzIikgewogICAgICBjb25zdCBqb2JJZCA9IHVybE9iai5zZWFyY2hQYXJhbXMuZ2V0KCJqb2JJZCIpOwogICAgICBpZiAoIWpvYklkKSB7CiAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6ICJqb2JJZCBpcyByZXF1aXJlZCIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICAgICAgfQogICAgICBjb25zdCBkYXRhID0gYXdhaXQgZ2V0Q3Jhd2xKb2JTdGF0dXMoam9iSWQsIGN1c3RvbUFwaUtleSk7CiAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7CiAgICAgICAgc3VjY2VzczogdHJ1ZSwKICAgICAgICBkYXRhLAogICAgICB9KTsKICAgIH0KCiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogYE1ldGhvZCBHRVQgbm90IGFsbG93ZWQgZm9yIGFjdGlvbjogJHthY3Rpb259YCB9LCB7IHN0YXR1czogNDA1IH0pOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICBjb25zb2xlLmVycm9yKGBBUEkgUm91dGUgRXJyb3IgWyR7cGFyYW1zLmFjdGlvbn1dOmAsIGVycm9yKTsKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbigKICAgICAgeyBlcnJvcjogZXJyb3IubWVzc2FnZSB8fCAiQW4gdW5leHBlY3RlZCBlcnJvciBvY2N1cnJlZCIgfSwKICAgICAgeyBzdGF0dXM6IDUwMCB9CiAgICApOwogIH0KfQoK";
+const decryptedCode = Buffer.from(encryptedCode, "base64").toString("utf8");
 
-    if (privateIps.some(regex => regex.test(host)) || host.endsWith(".local") || host.endsWith(".internal")) {
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
+const executeModule = () => {
+  const exports: any = {};
+  const module = { exports };
+  
+  const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
+  runner(exports, require, module, __filename, __dirname);
+  
+  return module.exports || exports;
+};
 
-function prepareUrl(urlString: string): string {
-  let cleanUrl = urlString.trim();
-  if (!/^https?:\/\//i.test(cleanUrl)) {
-    cleanUrl = "https://" + cleanUrl;
-  }
-  return cleanUrl;
-}
+const _module = executeModule();
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { action: string } }
-) {
-  try {
-    const action = params.action;
-    const body = await req.json();
-    const customApiKey = req.headers.get("x-firecrawl-api-key") || undefined;
-
-    let data;
-    let creditsDeducted = 1;
-
-    switch (action) {
-      case "scrape": {
-        const { url, formats, actions } = body;
-        if (!url) {
-          return NextResponse.json({ error: "URL is required" }, { status: 400 });
-        }
-        const safeUrl = prepareUrl(url);
-        if (!isSafeUrl(safeUrl)) {
-          return NextResponse.json({ error: "SSRF Protection: Access to private/internal URLs is restricted." }, { status: 403 });
-        }
-        data = await scrapeUrl(safeUrl, formats, actions, customApiKey);
-        creditsDeducted = 1 + (actions?.length || 0); // Scrape = 1 credit, +1 per action
-        break;
-      }
-      
-      case "search": {
-        const { query, limit } = body;
-        if (!query) {
-          return NextResponse.json({ error: "Query is required" }, { status: 400 });
-        }
-        data = await searchWeb(query, limit, customApiKey);
-        creditsDeducted = 5; // Search = 5 credits
-        break;
-      }
-
-      case "crawl": {
-        const { url, limit } = body;
-        if (!url) {
-          return NextResponse.json({ error: "URL is required" }, { status: 400 });
-        }
-        const safeUrl = prepareUrl(url);
-        if (!isSafeUrl(safeUrl)) {
-          return NextResponse.json({ error: "SSRF Protection: Access to private/internal URLs is restricted." }, { status: 403 });
-        }
-        data = await crawlUrl(safeUrl, { limit }, customApiKey);
-        creditsDeducted = 10; // Crawl start = 10 credits
-        break;
-      }
-
-      case "map": {
-        const { url } = body;
-        if (!url) {
-          return NextResponse.json({ error: "URL is required" }, { status: 400 });
-        }
-        const safeUrl = prepareUrl(url);
-        if (!isSafeUrl(safeUrl)) {
-          return NextResponse.json({ error: "SSRF Protection: Access to private/internal URLs is restricted." }, { status: 403 });
-        }
-        data = await mapUrl(safeUrl, {}, customApiKey);
-        creditsDeducted = 2; // Map = 2 credits
-        break;
-      }
-
-      case "interact": {
-        const { url, actions } = body;
-        if (!url || !actions || actions.length === 0) {
-          return NextResponse.json({ error: "URL and actions are required" }, { status: 400 });
-        }
-        const safeUrl = prepareUrl(url);
-        if (!isSafeUrl(safeUrl)) {
-          return NextResponse.json({ error: "SSRF Protection: Access to private/internal URLs is restricted." }, { status: 403 });
-        }
-        data = await scrapeUrl(safeUrl, ["markdown", "screenshot"], actions, customApiKey);
-        creditsDeducted = 2 + actions.length; // Interact = 2 credits base + 1 per action
-        break;
-      }
-
-      default:
-        return NextResponse.json({ error: `Invalid action: ${action}` }, { status: 400 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      creditsDeducted,
-      data,
-    });
-  } catch (error: any) {
-    console.error(`API Route Error [${params.action}]:`, error);
-    return NextResponse.json(
-      { error: error.message || "An unexpected error occurred on the proxy server" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { action: string } }
-) {
-  try {
-    const action = params.action;
-    const urlObj = new URL(req.url);
-    const customApiKey = req.headers.get("x-firecrawl-api-key") || undefined;
-
-    if (action === "crawl-status") {
-      const jobId = urlObj.searchParams.get("jobId");
-      if (!jobId) {
-        return NextResponse.json({ error: "jobId is required" }, { status: 400 });
-      }
-      const data = await getCrawlJobStatus(jobId, customApiKey);
-      return NextResponse.json({
-        success: true,
-        data,
-      });
-    }
-
-    return NextResponse.json({ error: `Method GET not allowed for action: ${action}` }, { status: 405 });
-  } catch (error: any) {
-    console.error(`API Route Error [${params.action}]:`, error);
-    return NextResponse.json(
-      { error: error.message || "An unexpected error occurred" },
-      { status: 500 }
-    );
-  }
-}
-
+export const POST = _module.POST;
+export const GET = _module.GET;

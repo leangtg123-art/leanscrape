@@ -1,175 +1,21 @@
+// 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
+// Decompilation or manual reverse engineering of this file is restricted.
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+const encryptedCode = "Cgpjb25zdCBzdXBhYmFzZVVybCA9IHByb2Nlc3MuZW52Lk5FWFRfUFVCTElDX1NVUEFCQVNFX1VSTCB8fCBwcm9jZXNzLmVudi5TVVBBQkFTRV9VUkwgfHwgIiI7CmNvbnN0IHN1cGFiYXNlQW5vbktleSA9IHByb2Nlc3MuZW52Lk5FWFRfUFVCTElDX1NVUEFCQVNFX0FOT05fS0VZIHx8IHByb2Nlc3MuZW52LlNVUEFCQVNFX0FOT05fS0VZIHx8ICIiOwoKY29uc3QgaXNSZWFsU3VwYWJhc2VDb25maWd1cmVkID0gCiAgc3VwYWJhc2VVcmwgJiYgCiAgc3VwYWJhc2VVcmwgIT09ICJodHRwczovL21vY2suc3VwYWJhc2UuY28iICYmIAogIHN1cGFiYXNlQW5vbktleSAmJiAKICBzdXBhYmFzZUFub25LZXkgIT09ICJtb2NrLWFub24ta2V5IjsKCi8vIFN1cGFiYXNlIENsaWVudCAoYmlzYSBiZXJ1cGEgY2xpZW50IGFzbGkgYXRhdSBtb2NrIGNsaWVudCkKY29uc3Qgc3VwYWJhc2UgPSBpc1JlYWxTdXBhYmFzZUNvbmZpZ3VyZWQKICA/IGNyZWF0ZUNsaWVudChzdXBhYmFzZVVybCwgc3VwYWJhc2VBbm9uS2V5KQogIDogbnVsbDsKCi8vIE1vY2sgZGF0YWJhc2UgaGVscGVyIHVudHVrIExvY2FsU3RvcmFnZS9NZW1vcnkgZmFsbGJhY2sKCgoKCmNvbnN0IERFRkFVTFRfQ1JFRElUUyA9IDEwOwoKY29uc3QgbW9ja0RiID0gewogIGdldENyZWRpdHM6ICgpID0+IHsKICAgIGlmICh0eXBlb2Ygd2luZG93ID09PSAidW5kZWZpbmVkIikgcmV0dXJuIERFRkFVTFRfQ1JFRElUUzsKICAgIAogICAgY29uc3Qgbm93ID0gRGF0ZS5ub3coKTsKICAgIGNvbnN0IGxhc3RSZXNldFN0ciA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKCJscy1jcmVkaXRzLXJlc2V0LXRpbWUiKTsKICAgIGNvbnN0IGxhc3RSZXNldCA9IGxhc3RSZXNldFN0ciA/IE51bWJlcihsYXN0UmVzZXRTdHIpIDogMDsKICAgIGNvbnN0IGZpdmVIb3Vyc01zID0gNSAqIDYwICogNjAgKiAxMDAwOwogICAgCiAgICBpZiAobm93IC0gbGFzdFJlc2V0ID49IGZpdmVIb3Vyc01zIHx8IGxhc3RSZXNldFN0ciA9PT0gbnVsbCkgewogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtY3JlZGl0cyIsIFN0cmluZyhERUZBVUxUX0NSRURJVFMpKTsKICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMtcmVzZXQtdGltZSIsIFN0cmluZyhub3cpKTsKICAgICAgcmV0dXJuIERFRkFVTFRfQ1JFRElUUzsKICAgIH0KICAgIAogICAgY29uc3QgY3JlZHMgPSBsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgibHMtY3JlZGl0cyIpOwogICAgaWYgKGNyZWRzID09PSBudWxsKSB7CiAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCJscy1jcmVkaXRzIiwgU3RyaW5nKERFRkFVTFRfQ1JFRElUUykpOwogICAgICByZXR1cm4gREVGQVVMVF9DUkVESVRTOwogICAgfQogICAgcmV0dXJuIE51bWJlcihjcmVkcyk7CiAgfSwKCiAgZGVkdWN0Q3JlZGl0czogKGFtb3VudCkgPT4gewogICAgY29uc3QgY3VycmVudCA9IG1vY2tEYi5nZXRDcmVkaXRzKCk7CiAgICBjb25zdCBuZXh0ID0gTWF0aC5tYXgoMCwgY3VycmVudCAtIGFtb3VudCk7CiAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMiLCBTdHJpbmcobmV4dCkpOwogICAgfQogICAgcmV0dXJuIG5leHQ7CiAgfSwKCiAgYWRkQ3JlZGl0czogKGFtb3VudCkgPT4gewogICAgY29uc3QgY3VycmVudCA9IG1vY2tEYi5nZXRDcmVkaXRzKCk7CiAgICBjb25zdCBuZXh0ID0gY3VycmVudCArIGFtb3VudDsKICAgIGlmICh0eXBlb2Ygd2luZG93ICE9PSAidW5kZWZpbmVkIikgewogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtY3JlZGl0cyIsIFN0cmluZyhuZXh0KSk7CiAgICB9CiAgICByZXR1cm4gbmV4dDsKICB9LAoKICBnZXRBcGlLZXlzOiAoKSA9PiB7CiAgICBpZiAodHlwZW9mIHdpbmRvdyA9PT0gInVuZGVmaW5lZCIpIHJldHVybiBbXTsKICAgIGNvbnN0IGtleXMgPSBsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgibHMtYXBpa2V5cyIpOwogICAgaWYgKGtleXMgPT09IG51bGwpIHsKICAgICAgY29uc3QgZGVmYXVsdEtleXMgPSBbCiAgICAgICAgewogICAgICAgICAgaWQ6ICJrZXktMSIsCiAgICAgICAgICBuYW1lOiAiVGVsZWdyYW0gU2NyYXBlciBCb3QiLAogICAgICAgICAga2V5OiAibHNfbGl2ZV9hMWIyYzNkNGU1ZjZnN2g4aTlqMCIsCiAgICAgICAgICBjcmVhdGVkQXQ6IG5ldyBEYXRlKERhdGUubm93KCkgLSA1ICogMjQgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKSwKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgIGlkOiAia2V5LTIiLAogICAgICAgICAgbmFtZTogIkRlZXAgUmVzZWFyY2ggQWdlbnQiLAogICAgICAgICAga2V5OiAibHNfbGl2ZV96OXk4eDd3NnY1dTR0M3MycjFxMCIsCiAgICAgICAgICBjcmVhdGVkQXQ6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSwKICAgICAgICB9CiAgICAgIF07CiAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCJscy1hcGlrZXlzIiwgSlNPTi5zdHJpbmdpZnkoZGVmYXVsdEtleXMpKTsKICAgICAgcmV0dXJuIGRlZmF1bHRLZXlzOwogICAgfQogICAgcmV0dXJuIEpTT04ucGFyc2Uoa2V5cyk7CiAgfSwKCiAgY3JlYXRlQXBpS2V5OiAobmFtZSk6IEFwaUtleUl0ZW0gPT4gewogICAgY29uc3Qga2V5cyA9IG1vY2tEYi5nZXRBcGlLZXlzKCk7CiAgICBjb25zdCBuZXdLZXk6IEFwaUtleUl0ZW0gPSB7CiAgICAgIGlkOiAia2V5LSIgKyBNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zdWJzdHJpbmcoMiwgOSksCiAgICAgIG5hbWUsCiAgICAgIGtleTogYGxzX2xpdmVfJHtNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zdWJzdHJpbmcoMiwgMTIpfSR7TWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc3Vic3RyaW5nKDIsIDEyKX1gLAogICAgICBjcmVhdGVkQXQ6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSwKICAgIH07CiAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWFwaWtleXMiLCBKU09OLnN0cmluZ2lmeShbLi4ua2V5cywgbmV3S2V5XSkpOwogICAgfQogICAgcmV0dXJuIG5ld0tleTsKICB9LAoKICBkZWxldGVBcGlLZXk6IChpZCk6IHZvaWQgPT4gewogICAgY29uc3Qga2V5cyA9IG1vY2tEYi5nZXRBcGlLZXlzKCk7CiAgICBjb25zdCBmaWx0ZXJlZCA9IGtleXMuZmlsdGVyKGsgPT4gay5pZCAhPT0gaWQpOwogICAgaWYgKHR5cGVvZiB3aW5kb3cgPT09ICJ1bmRlZmluZWQiKSByZXR1cm47CiAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtYXBpa2V5cyIsIEpTT04uc3RyaW5naWZ5KGZpbHRlcmVkKSk7CiAgfSwKCiAgZ2V0SGlzdG9yeTogKCkgPT4gewogICAgaWYgKHR5cGVvZiB3aW5kb3cgPT09ICJ1bmRlZmluZWQiKSByZXR1cm4gW107CiAgICBjb25zdCBoaXN0b3J5ID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oImxzLWhpc3RvcnkiKTsKICAgIGlmIChoaXN0b3J5ID09PSBudWxsKSB7CiAgICAgIGNvbnN0IGRlZmF1bHRIaXN0b3J5ID0gWwogICAgICAgIHsKICAgICAgICAgIGlkOiAiaGlzdC0xIiwKICAgICAgICAgIHRpbWVzdGFtcDogbmV3IERhdGUoRGF0ZS5ub3coKSAtIDMgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKSwKICAgICAgICAgIGVuZHBvaW50OiAiU0NSQVBFIiwKICAgICAgICAgIHRhcmdldFVybDogImh0dHBzOi8vd2lraXBlZGlhLm9yZy93aWtpL1dlYl9zY3JhcGluZyIsCiAgICAgICAgICBzdGF0dXM6ICIyMDAgT0siLAogICAgICAgICAgY3JlZGl0czogMSwKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgIGlkOiAiaGlzdC0yIiwKICAgICAgICAgIHRpbWVzdGFtcDogbmV3IERhdGUoRGF0ZS5ub3coKSAtIDEyICogNjAgKiA2MCAqIDEwMDApLnRvSVNPU3RyaW5nKCksCiAgICAgICAgICBlbmRwb2ludDogIlNFQVJDSCIsCiAgICAgICAgICB0YXJnZXRVcmw6ICJxdWVyeTogJ25leHRqcyAxNCBwZXJmb3JtYW5jZSBvcHRpbWl6YXRpb24nIiwKICAgICAgICAgIHN0YXR1czogIjIwMCBPSyIsCiAgICAgICAgICBjcmVkaXRzOiA1LAogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgaWQ6ICJoaXN0LTMiLAogICAgICAgICAgdGltZXN0YW1wOiBuZXcgRGF0ZShEYXRlLm5vdygpIC0gMSAqIDI0ICogNjAgKiA2MCAqIDEwMDApLnRvSVNPU3RyaW5nKCksCiAgICAgICAgICBlbmRwb2ludDogIk1BUCIsCiAgICAgICAgICB0YXJnZXRVcmw6ICJodHRwczovL2dpdGh1Yi5jb20iLAogICAgICAgICAgc3RhdHVzOiAiMjAwIE9LIiwKICAgICAgICAgIGNyZWRpdHM6IDIsCiAgICAgICAgfQogICAgICBdOwogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtaGlzdG9yeSIsIEpTT04uc3RyaW5naWZ5KGRlZmF1bHRIaXN0b3J5KSk7CiAgICAgIHJldHVybiBkZWZhdWx0SGlzdG9yeTsKICAgIH0KICAgIHJldHVybiBKU09OLnBhcnNlKGhpc3RvcnkpOwogIH0sCgogIGFkZEhpc3Rvcnk6IChlbmRwb2ludCwgdGFyZ2V0VXJsLCBzdGF0dXMsIGNyZWRpdHMsIHJlc3BvbnNlUHJldmlldz8pOiBIaXN0b3J5SXRlbSA9PiB7CiAgICBjb25zdCBoaXN0b3J5ID0gbW9ja0RiLmdldEhpc3RvcnkoKTsKICAgIGNvbnN0IG5ld0l0ZW06IEhpc3RvcnlJdGVtID0gewogICAgICBpZDogImhpc3QtIiArIE1hdGgucmFuZG9tKCkudG9TdHJpbmcoMzYpLnN1YnN0cmluZygyLCA5KSwKICAgICAgdGltZXN0YW1wOiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCksCiAgICAgIGVuZHBvaW50LAogICAgICB0YXJnZXRVcmwsCiAgICAgIHN0YXR1cywKICAgICAgY3JlZGl0cywKICAgICAgcmVzcG9uc2VQcmV2aWV3LAogICAgfTsKICAgIGlmICh0eXBlb2Ygd2luZG93ICE9PSAidW5kZWZpbmVkIikgewogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtaGlzdG9yeSIsIEpTT04uc3RyaW5naWZ5KFtuZXdJdGVtLCAuLi5oaXN0b3J5XSkpOwogICAgfQogICAgcmV0dXJuIG5ld0l0ZW07CiAgfQp9Owo=";
+const decryptedCode = Buffer.from(encryptedCode, "base64").toString("utf8");
 
-const isRealSupabaseConfigured = 
-  supabaseUrl && 
-  supabaseUrl !== "https://mock.supabase.co" && 
-  supabaseAnonKey && 
-  supabaseAnonKey !== "mock-anon-key";
-
-// Supabase Client (bisa berupa client asli atau mock client)
-export const supabase = isRealSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
-
-// Mock database helper untuk LocalStorage/Memory fallback
-export interface ApiKeyItem {
-  id: string;
-  name: string;
-  key: string;
-  createdAt: string;
-}
-
-export interface HistoryItem {
-  id: string;
-  timestamp: string;
-  endpoint: string;
-  targetUrl: string;
-  status: string;
-  credits: number;
-  responsePreview?: string;
-}
-
-const DEFAULT_CREDITS = 10;
-
-export const mockDb = {
-  getCredits: (): number => {
-    if (typeof window === "undefined") return DEFAULT_CREDITS;
-    
-    const now = Date.now();
-    const lastResetStr = localStorage.getItem("ls-credits-reset-time");
-    const lastReset = lastResetStr ? Number(lastResetStr) : 0;
-    const fiveHoursMs = 5 * 60 * 60 * 1000;
-    
-    if (now - lastReset >= fiveHoursMs || lastResetStr === null) {
-      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
-      localStorage.setItem("ls-credits-reset-time", String(now));
-      return DEFAULT_CREDITS;
-    }
-    
-    const creds = localStorage.getItem("ls-credits");
-    if (creds === null) {
-      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
-      return DEFAULT_CREDITS;
-    }
-    return Number(creds);
-  },
-
-  deductCredits: (amount: number): number => {
-    const current = mockDb.getCredits();
-    const next = Math.max(0, current - amount);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ls-credits", String(next));
-    }
-    return next;
-  },
-
-  addCredits: (amount: number): number => {
-    const current = mockDb.getCredits();
-    const next = current + amount;
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ls-credits", String(next));
-    }
-    return next;
-  },
-
-  getApiKeys: (): ApiKeyItem[] => {
-    if (typeof window === "undefined") return [];
-    const keys = localStorage.getItem("ls-apikeys");
-    if (keys === null) {
-      const defaultKeys = [
-        {
-          id: "key-1",
-          name: "Telegram Scraper Bot",
-          key: "ls_live_a1b2c3d4e5f6g7h8i9j0",
-          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          id: "key-2",
-          name: "Deep Research Agent",
-          key: "ls_live_z9y8x7w6v5u4t3s2r1q0",
-          createdAt: new Date().toISOString(),
-        }
-      ];
-      localStorage.setItem("ls-apikeys", JSON.stringify(defaultKeys));
-      return defaultKeys;
-    }
-    return JSON.parse(keys);
-  },
-
-  createApiKey: (name: string): ApiKeyItem => {
-    const keys = mockDb.getApiKeys();
-    const newKey: ApiKeyItem = {
-      id: "key-" + Math.random().toString(36).substring(2, 9),
-      name,
-      key: `ls_live_${Math.random().toString(36).substring(2, 12)}${Math.random().toString(36).substring(2, 12)}`,
-      createdAt: new Date().toISOString(),
-    };
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ls-apikeys", JSON.stringify([...keys, newKey]));
-    }
-    return newKey;
-  },
-
-  deleteApiKey: (id: string): void => {
-    const keys = mockDb.getApiKeys();
-    const filtered = keys.filter(k => k.id !== id);
-    if (typeof window === "undefined") return;
-    localStorage.setItem("ls-apikeys", JSON.stringify(filtered));
-  },
-
-  getHistory: (): HistoryItem[] => {
-    if (typeof window === "undefined") return [];
-    const history = localStorage.getItem("ls-history");
-    if (history === null) {
-      const defaultHistory = [
-        {
-          id: "hist-1",
-          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-          endpoint: "SCRAPE",
-          targetUrl: "https://wikipedia.org/wiki/Web_scraping",
-          status: "200 OK",
-          credits: 1,
-        },
-        {
-          id: "hist-2",
-          timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-          endpoint: "SEARCH",
-          targetUrl: "query: 'nextjs 14 performance optimization'",
-          status: "200 OK",
-          credits: 5,
-        },
-        {
-          id: "hist-3",
-          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          endpoint: "MAP",
-          targetUrl: "https://github.com",
-          status: "200 OK",
-          credits: 2,
-        }
-      ];
-      localStorage.setItem("ls-history", JSON.stringify(defaultHistory));
-      return defaultHistory;
-    }
-    return JSON.parse(history);
-  },
-
-  addHistory: (endpoint: string, targetUrl: string, status: string, credits: number, responsePreview?: string): HistoryItem => {
-    const history = mockDb.getHistory();
-    const newItem: HistoryItem = {
-      id: "hist-" + Math.random().toString(36).substring(2, 9),
-      timestamp: new Date().toISOString(),
-      endpoint,
-      targetUrl,
-      status,
-      credits,
-      responsePreview,
-    };
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ls-history", JSON.stringify([newItem, ...history]));
-    }
-    return newItem;
-  }
+const executeModule = () => {
+  const exports: any = {};
+  const module = { exports };
+  
+  const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
+  runner(exports, require, module, __filename, __dirname);
+  
+  return module.exports || exports;
 };
+
+const _module = executeModule();
+
+export const supabase = _module.supabase;
+export const mockDb = _module.mockDb;

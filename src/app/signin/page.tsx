@@ -14,6 +14,36 @@ export default function Signin() {
   const [password, setPassword] = useState("password123");
   const [loading, setLoading] = useState(false);
 
+  // Detect GitHub OAuth callback
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      if (code) {
+        setLoading(true);
+        fetch("/api/auth/github", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.user) {
+            localStorage.setItem("ls-user", JSON.stringify(data.user));
+            router.push("/playground");
+          } else {
+            alert(data.error || "GitHub Authentication failed");
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+      }
+    }
+  }, [router]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -24,27 +54,33 @@ export default function Signin() {
         localStorage.setItem("ls-user", JSON.stringify({ email }));
       }
       setLoading(false);
-      router.push("/dashboard");
+      router.push("/playground"); // Redirect directly to playground
     }, 1000);
   };
 
   const handleGithubLogin = (e: React.MouseEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Simulasi GitHub OAuth sukses
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ls-user", JSON.stringify({ 
-          email: "leangtg123-art@github.com",
-          name: "leangtg123-art",
-          provider: "github",
-          avatar: "https://avatars.githubusercontent.com/u/237972227?v=4"
-        }));
-      }
-      setLoading(false);
-      router.push("/dashboard");
-    }, 1000);
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    
+    if (clientId) {
+      const redirectUri = window.location.origin + "/signin";
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=read:user&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    } else {
+      setLoading(true);
+      // Simulasi GitHub OAuth sukses jika Client ID tidak diset
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("ls-user", JSON.stringify({ 
+            email: "leangtg123-art@github.com",
+            name: "leangtg123-art",
+            provider: "github",
+            avatar: "https://avatars.githubusercontent.com/u/237972227?v=4"
+          }));
+        }
+        setLoading(false);
+        router.push("/playground");
+      }, 1000);
+    }
   };
 
   return (

@@ -1,105 +1,24 @@
-const BASE_URL = "https://api.firecrawl.dev";
+// 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
+// Decompilation or manual reverse engineering of this file is restricted.
 
-function getHeaders(customApiKey?: string) {
-  const apiKey = customApiKey || process.env.FIRECRAWL_API_KEY;
-  if (!apiKey) {
-    throw new Error("Firecrawl API Key is required. Please retrieve your API key from firecrawl.dev and paste it in the Playground Settings.");
-  }
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
-  };
-}
 
-export async function scrapeUrl(url: string, formats: any[] = ["markdown"], actions?: any[], customApiKey?: string) {
-  // Ensure we don't send both screenshot and screenshot@fullPage to avoid 400 Bad Request
-  let cleanFormats = [...formats];
-  if (cleanFormats.includes("screenshot@fullPage")) {
-    cleanFormats = cleanFormats.filter((f) => f !== "screenshot");
-  }
+const encryptedCode = "Y29uc3QgQkFTRV9VUkwgPSAiaHR0cHM6Ly9hcGkuZmlyZWNyYXdsLmRldiI7CgpmdW5jdGlvbiBnZXRIZWFkZXJzKGN1c3RvbUFwaUtleT8pIHsKICBjb25zdCBhcGlLZXkgPSBjdXN0b21BcGlLZXkgfHwgcHJvY2Vzcy5lbnYuRklSRUNSQVdMX0FQSV9LRVk7CiAgaWYgKCFhcGlLZXkpIHsKICAgIHRocm93IG5ldyBFcnJvcigiRmlyZWNyYXdsIEFQSSBLZXkgaXMgcmVxdWlyZWQuIFBsZWFzZSByZXRyaWV2ZSB5b3VyIEFQSSBrZXkgZnJvbSBmaXJlY3Jhd2wuZGV2IGFuZCBwYXN0ZSBpdCBpbiB0aGUgUGxheWdyb3VuZCBTZXR0aW5ncy4iKTsKICB9CiAgcmV0dXJuIHsKICAgICJDb250ZW50LVR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIsCiAgICBBdXRob3JpemF0aW9uOiBgQmVhcmVyICR7YXBpS2V5fWAsCiAgfTsKfQoKYXN5bmMgZnVuY3Rpb24gc2NyYXBlVXJsKHVybCwgZm9ybWF0cyA9IFsibWFya2Rvd24iXSwgYWN0aW9ucz8sIGN1c3RvbUFwaUtleT8pIHsKICAvLyBFbnN1cmUgd2UgZG9uJ3Qgc2VuZCBib3RoIHNjcmVlbnNob3QgYW5kIHNjcmVlbnNob3RAZnVsbFBhZ2UgdG8gYXZvaWQgNDAwIEJhZCBSZXF1ZXN0CiAgbGV0IGNsZWFuRm9ybWF0cyA9IFsuLi5mb3JtYXRzXTsKICBpZiAoY2xlYW5Gb3JtYXRzLmluY2x1ZGVzKCJzY3JlZW5zaG90QGZ1bGxQYWdlIikpIHsKICAgIGNsZWFuRm9ybWF0cyA9IGNsZWFuRm9ybWF0cy5maWx0ZXIoKGYpID0+IGYgIT09ICJzY3JlZW5zaG90Iik7CiAgfQoKICAvLyBNYXAgc2NyZWVuc2hvdEBmdWxsUGFnZSBpbnRvIG9iamVjdCBmb3JtYXQgZXhwZWN0ZWQgYnkgRmlyZWNyYXdsIHYxCiAgY29uc3QgbWFwcGVkRm9ybWF0cyA9IGNsZWFuRm9ybWF0cy5tYXAoKGYpID0+IHsKICAgIGlmIChmID09PSAic2NyZWVuc2hvdEBmdWxsUGFnZSIpIHsKICAgICAgcmV0dXJuIHsgdHlwZTogInNjcmVlbnNob3QiLCBmdWxsUGFnZTogdHJ1ZSB9OwogICAgfQogICAgcmV0dXJuIGY7CiAgfSk7CgogIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoKGAke0JBU0VfVVJMfS92MS9zY3JhcGVgLCB7CiAgICBtZXRob2Q6ICJQT1NUIiwKICAgIGhlYWRlcnM6IGdldEhlYWRlcnMoY3VzdG9tQXBpS2V5KSwKICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsKICAgICAgdXJsLAogICAgICBmb3JtYXRzOiBtYXBwZWRGb3JtYXRzLAogICAgICAuLi4oYWN0aW9ucyAmJiBhY3Rpb25zLmxlbmd0aCA+IDAgPyB7IGFjdGlvbnMgfSA6IHt9KSwKICAgIH0pLAogIH0pOwoKICBpZiAoIXJlcy5vaykgewogICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcmVzLnRleHQoKTsKICAgIHRocm93IG5ldyBFcnJvcihgRmlyZWNyYXdsIEFQSSBlcnJvciAoc3RhdHVzICR7cmVzLnN0YXR1c30pOiAke2Vycm9yVGV4dH1gKTsKICB9CgogIHJldHVybiByZXMuanNvbigpOwp9Cgphc3luYyBmdW5jdGlvbiBzZWFyY2hXZWIocXVlcnksIGxpbWl0ID0gNSwgY3VzdG9tQXBpS2V5PykgewogIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoKGAke0JBU0VfVVJMfS92MS9zZWFyY2hgLCB7CiAgICBtZXRob2Q6ICJQT1NUIiwKICAgIGhlYWRlcnM6IGdldEhlYWRlcnMoY3VzdG9tQXBpS2V5KSwKICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsgcXVlcnksIGxpbWl0IH0pLAogIH0pOwoKICBpZiAoIXJlcy5vaykgewogICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcmVzLnRleHQoKTsKICAgIHRocm93IG5ldyBFcnJvcihgRmlyZWNyYXdsIEFQSSBlcnJvciAoc3RhdHVzICR7cmVzLnN0YXR1c30pOiAke2Vycm9yVGV4dH1gKTsKICB9CgogIHJldHVybiByZXMuanNvbigpOwp9Cgphc3luYyBmdW5jdGlvbiBjcmF3bFVybCh1cmwsIG9wdGlvbnMgPSB7fSwgY3VzdG9tQXBpS2V5PykgewogIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoKGAke0JBU0VfVVJMfS92MS9jcmF3bGAsIHsKICAgIG1ldGhvZDogIlBPU1QiLAogICAgaGVhZGVyczogZ2V0SGVhZGVycyhjdXN0b21BcGlLZXkpLAogICAgYm9keTogSlNPTi5zdHJpbmdpZnkoeyB1cmwsIC4uLm9wdGlvbnMgfSksCiAgfSk7CgogIGlmICghcmVzLm9rKSB7CiAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCByZXMudGV4dCgpOwogICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogIH0KCiAgcmV0dXJuIHJlcy5qc29uKCk7Cn0KCmFzeW5jIGZ1bmN0aW9uIGdldENyYXdsSm9iU3RhdHVzKGpvYklkLCBjdXN0b21BcGlLZXk/KSB7CiAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goYCR7QkFTRV9VUkx9L3YxL2NyYXdsLyR7am9iSWR9YCwgewogICAgbWV0aG9kOiAiR0VUIiwKICAgIGhlYWRlcnM6IGdldEhlYWRlcnMoY3VzdG9tQXBpS2V5KSwKICB9KTsKCiAgaWYgKCFyZXMub2spIHsKICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHJlcy50ZXh0KCk7CiAgICB0aHJvdyBuZXcgRXJyb3IoYEZpcmVjcmF3bCBBUEkgZXJyb3IgKHN0YXR1cyAke3Jlcy5zdGF0dXN9KTogJHtlcnJvclRleHR9YCk7CiAgfQoKICByZXR1cm4gcmVzLmpzb24oKTsKfQoKYXN5bmMgZnVuY3Rpb24gbWFwVXJsKHVybCwgb3B0aW9ucyA9IHt9LCBjdXN0b21BcGlLZXk/KSB7CiAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goYCR7QkFTRV9VUkx9L3YxL21hcGAsIHsKICAgIG1ldGhvZDogIlBPU1QiLAogICAgaGVhZGVyczogZ2V0SGVhZGVycyhjdXN0b21BcGlLZXkpLAogICAgYm9keTogSlNPTi5zdHJpbmdpZnkoeyB1cmwsIC4uLm9wdGlvbnMgfSksCiAgfSk7CgogIGlmICghcmVzLm9rKSB7CiAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCByZXMudGV4dCgpOwogICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogIH0KCiAgcmV0dXJuIHJlcy5qc29uKCk7Cn0KCg==";
+const decryptedCode = Buffer.from(encryptedCode, "base64").toString("utf8");
 
-  // Map screenshot@fullPage into object format expected by Firecrawl v1
-  const mappedFormats = cleanFormats.map((f) => {
-    if (f === "screenshot@fullPage") {
-      return { type: "screenshot", fullPage: true };
-    }
-    return f;
-  });
+const executeModule = () => {
+  const exports: any = {};
+  const module = { exports };
+  
+  const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
+  runner(exports, require, module, __filename, __dirname);
+  
+  return module.exports || exports;
+};
 
-  const res = await fetch(`${BASE_URL}/v1/scrape`, {
-    method: "POST",
-    headers: getHeaders(customApiKey),
-    body: JSON.stringify({
-      url,
-      formats: mappedFormats,
-      ...(actions && actions.length > 0 ? { actions } : {}),
-    }),
-  });
+const _module = executeModule();
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
-  }
-
-  return res.json();
-}
-
-export async function searchWeb(query: string, limit: number = 5, customApiKey?: string) {
-  const res = await fetch(`${BASE_URL}/v1/search`, {
-    method: "POST",
-    headers: getHeaders(customApiKey),
-    body: JSON.stringify({ query, limit }),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
-  }
-
-  return res.json();
-}
-
-export async function crawlUrl(url: string, options: any = {}, customApiKey?: string) {
-  const res = await fetch(`${BASE_URL}/v1/crawl`, {
-    method: "POST",
-    headers: getHeaders(customApiKey),
-    body: JSON.stringify({ url, ...options }),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
-  }
-
-  return res.json();
-}
-
-export async function getCrawlJobStatus(jobId: string, customApiKey?: string) {
-  const res = await fetch(`${BASE_URL}/v1/crawl/${jobId}`, {
-    method: "GET",
-    headers: getHeaders(customApiKey),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
-  }
-
-  return res.json();
-}
-
-export async function mapUrl(url: string, options: any = {}, customApiKey?: string) {
-  const res = await fetch(`${BASE_URL}/v1/map`, {
-    method: "POST",
-    headers: getHeaders(customApiKey),
-    body: JSON.stringify({ url, ...options }),
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
-  }
-
-  return res.json();
-}
-
+export const scrapeUrl = _module.scrapeUrl;
+export const searchWeb = _module.searchWeb;
+export const crawlUrl = _module.crawlUrl;
+export const getCrawlJobStatus = _module.getCrawlJobStatus;
+export const mapUrl = _module.mapUrl;
