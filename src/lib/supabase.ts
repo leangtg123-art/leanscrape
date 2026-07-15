@@ -1,8 +1,20 @@
-// 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
-// Decompilation or manual reverse engineering of this file is restricted.
 import { createClient } from "@supabase/supabase-js";
-import * as supabaseJs from "@supabase/supabase-js";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+
+const isRealSupabaseConfigured = 
+  supabaseUrl && 
+  supabaseUrl !== "https://mock.supabase.co" && 
+  supabaseAnonKey && 
+  supabaseAnonKey !== "mock-anon-key";
+
+// Supabase Client (bisa berupa client asli atau mock client)
+export const supabase = isRealSupabaseConfigured
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
+
+// Mock database helper untuk LocalStorage/Memory fallback
 export interface ApiKeyItem {
   id: string;
   name: string;
@@ -20,28 +32,144 @@ export interface HistoryItem {
   responsePreview?: string;
 }
 
-const encryptedCode = "InVzZSBzdHJpY3QiOwpPYmplY3QuZGVmaW5lUHJvcGVydHkoZXhwb3J0cywgIl9fZXNNb2R1bGUiLCB7IHZhbHVlOiB0cnVlIH0pOwpleHBvcnRzLm1vY2tEYiA9IGV4cG9ydHMuc3VwYWJhc2UgPSB2b2lkIDA7CmNvbnN0IHN1cGFiYXNlX2pzXzEgPSByZXF1aXJlKCJAc3VwYWJhc2Uvc3VwYWJhc2UtanMiKTsKY29uc3Qgc3VwYWJhc2VVcmwgPSBwcm9jZXNzLmVudi5ORVhUX1BVQkxJQ19TVVBBQkFTRV9VUkwgfHwgcHJvY2Vzcy5lbnYuU1VQQUJBU0VfVVJMIHx8ICIiOwpjb25zdCBzdXBhYmFzZUFub25LZXkgPSBwcm9jZXNzLmVudi5ORVhUX1BVQkxJQ19TVVBBQkFTRV9BTk9OX0tFWSB8fCBwcm9jZXNzLmVudi5TVVBBQkFTRV9BTk9OX0tFWSB8fCAiIjsKY29uc3QgaXNSZWFsU3VwYWJhc2VDb25maWd1cmVkID0gc3VwYWJhc2VVcmwgJiYKICAgIHN1cGFiYXNlVXJsICE9PSAiaHR0cHM6Ly9tb2NrLnN1cGFiYXNlLmNvIiAmJgogICAgc3VwYWJhc2VBbm9uS2V5ICYmCiAgICBzdXBhYmFzZUFub25LZXkgIT09ICJtb2NrLWFub24ta2V5IjsKLy8gU3VwYWJhc2UgQ2xpZW50IChiaXNhIGJlcnVwYSBjbGllbnQgYXNsaSBhdGF1IG1vY2sgY2xpZW50KQpleHBvcnRzLnN1cGFiYXNlID0gaXNSZWFsU3VwYWJhc2VDb25maWd1cmVkCiAgICA/ICgwLCBzdXBhYmFzZV9qc18xLmNyZWF0ZUNsaWVudCkoc3VwYWJhc2VVcmwsIHN1cGFiYXNlQW5vbktleSkKICAgIDogbnVsbDsKY29uc3QgREVGQVVMVF9DUkVESVRTID0gMTA7CmV4cG9ydHMubW9ja0RiID0gewogICAgZ2V0Q3JlZGl0czogKCkgPT4gewogICAgICAgIGlmICh0eXBlb2Ygd2luZG93ID09PSAidW5kZWZpbmVkIikKICAgICAgICAgICAgcmV0dXJuIERFRkFVTFRfQ1JFRElUUzsKICAgICAgICBjb25zdCBub3cgPSBEYXRlLm5vdygpOwogICAgICAgIGNvbnN0IGxhc3RSZXNldFN0ciA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKCJscy1jcmVkaXRzLXJlc2V0LXRpbWUiKTsKICAgICAgICBjb25zdCBsYXN0UmVzZXQgPSBsYXN0UmVzZXRTdHIgPyBOdW1iZXIobGFzdFJlc2V0U3RyKSA6IDA7CiAgICAgICAgY29uc3QgZml2ZUhvdXJzTXMgPSA1ICogNjAgKiA2MCAqIDEwMDA7CiAgICAgICAgaWYgKG5vdyAtIGxhc3RSZXNldCA+PSBmaXZlSG91cnNNcyB8fCBsYXN0UmVzZXRTdHIgPT09IG51bGwpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMiLCBTdHJpbmcoREVGQVVMVF9DUkVESVRTKSk7CiAgICAgICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCJscy1jcmVkaXRzLXJlc2V0LXRpbWUiLCBTdHJpbmcobm93KSk7CiAgICAgICAgICAgIHJldHVybiBERUZBVUxUX0NSRURJVFM7CiAgICAgICAgfQogICAgICAgIGNvbnN0IGNyZWRzID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oImxzLWNyZWRpdHMiKTsKICAgICAgICBpZiAoY3JlZHMgPT09IG51bGwpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMiLCBTdHJpbmcoREVGQVVMVF9DUkVESVRTKSk7CiAgICAgICAgICAgIHJldHVybiBERUZBVUxUX0NSRURJVFM7CiAgICAgICAgfQogICAgICAgIHJldHVybiBOdW1iZXIoY3JlZHMpOwogICAgfSwKICAgIGRlZHVjdENyZWRpdHM6IChhbW91bnQpID0+IHsKICAgICAgICBjb25zdCBjdXJyZW50ID0gZXhwb3J0cy5tb2NrRGIuZ2V0Q3JlZGl0cygpOwogICAgICAgIGNvbnN0IG5leHQgPSBNYXRoLm1heCgwLCBjdXJyZW50IC0gYW1vdW50KTsKICAgICAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMiLCBTdHJpbmcobmV4dCkpOwogICAgICAgIH0KICAgICAgICByZXR1cm4gbmV4dDsKICAgIH0sCiAgICBhZGRDcmVkaXRzOiAoYW1vdW50KSA9PiB7CiAgICAgICAgY29uc3QgY3VycmVudCA9IGV4cG9ydHMubW9ja0RiLmdldENyZWRpdHMoKTsKICAgICAgICBjb25zdCBuZXh0ID0gY3VycmVudCArIGFtb3VudDsKICAgICAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWNyZWRpdHMiLCBTdHJpbmcobmV4dCkpOwogICAgICAgIH0KICAgICAgICByZXR1cm4gbmV4dDsKICAgIH0sCiAgICBnZXRBcGlLZXlzOiAoKSA9PiB7CiAgICAgICAgaWYgKHR5cGVvZiB3aW5kb3cgPT09ICJ1bmRlZmluZWQiKQogICAgICAgICAgICByZXR1cm4gW107CiAgICAgICAgY29uc3Qga2V5cyA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKCJscy1hcGlrZXlzIik7CiAgICAgICAgaWYgKGtleXMgPT09IG51bGwpIHsKICAgICAgICAgICAgY29uc3QgZGVmYXVsdEtleXMgPSBbCiAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgaWQ6ICJrZXktMSIsCiAgICAgICAgICAgICAgICAgICAgbmFtZTogIlRlbGVncmFtIFNjcmFwZXIgQm90IiwKICAgICAgICAgICAgICAgICAgICBrZXk6ICJsc19saXZlX2ExYjJjM2Q0ZTVmNmc3aDhpOWowIiwKICAgICAgICAgICAgICAgICAgICBjcmVhdGVkQXQ6IG5ldyBEYXRlKERhdGUubm93KCkgLSA1ICogMjQgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKSwKICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgaWQ6ICJrZXktMiIsCiAgICAgICAgICAgICAgICAgICAgbmFtZTogIkRlZXAgUmVzZWFyY2ggQWdlbnQiLAogICAgICAgICAgICAgICAgICAgIGtleTogImxzX2xpdmVfejl5OHg3dzZ2NXU0dDNzMnIxcTAiLAogICAgICAgICAgICAgICAgICAgIGNyZWF0ZWRBdDogbmV3IERhdGUoKS50b0lTT1N0cmluZygpLAogICAgICAgICAgICAgICAgfQogICAgICAgICAgICBdOwogICAgICAgICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgibHMtYXBpa2V5cyIsIEpTT04uc3RyaW5naWZ5KGRlZmF1bHRLZXlzKSk7CiAgICAgICAgICAgIHJldHVybiBkZWZhdWx0S2V5czsKICAgICAgICB9CiAgICAgICAgcmV0dXJuIEpTT04ucGFyc2Uoa2V5cyk7CiAgICB9LAogICAgY3JlYXRlQXBpS2V5OiAobmFtZSkgPT4gewogICAgICAgIGNvbnN0IGtleXMgPSBleHBvcnRzLm1vY2tEYi5nZXRBcGlLZXlzKCk7CiAgICAgICAgY29uc3QgbmV3S2V5ID0gewogICAgICAgICAgICBpZDogImtleS0iICsgTWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc3Vic3RyaW5nKDIsIDkpLAogICAgICAgICAgICBuYW1lLAogICAgICAgICAgICBrZXk6IGBsc19saXZlXyR7TWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc3Vic3RyaW5nKDIsIDEyKX0ke01hdGgucmFuZG9tKCkudG9TdHJpbmcoMzYpLnN1YnN0cmluZygyLCAxMil9YCwKICAgICAgICAgICAgY3JlYXRlZEF0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCksCiAgICAgICAgfTsKICAgICAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWFwaWtleXMiLCBKU09OLnN0cmluZ2lmeShbLi4ua2V5cywgbmV3S2V5XSkpOwogICAgICAgIH0KICAgICAgICByZXR1cm4gbmV3S2V5OwogICAgfSwKICAgIGRlbGV0ZUFwaUtleTogKGlkKSA9PiB7CiAgICAgICAgY29uc3Qga2V5cyA9IGV4cG9ydHMubW9ja0RiLmdldEFwaUtleXMoKTsKICAgICAgICBjb25zdCBmaWx0ZXJlZCA9IGtleXMuZmlsdGVyKGsgPT4gay5pZCAhPT0gaWQpOwogICAgICAgIGlmICh0eXBlb2Ygd2luZG93ID09PSAidW5kZWZpbmVkIikKICAgICAgICAgICAgcmV0dXJuOwogICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCJscy1hcGlrZXlzIiwgSlNPTi5zdHJpbmdpZnkoZmlsdGVyZWQpKTsKICAgIH0sCiAgICBnZXRIaXN0b3J5OiAoKSA9PiB7CiAgICAgICAgaWYgKHR5cGVvZiB3aW5kb3cgPT09ICJ1bmRlZmluZWQiKQogICAgICAgICAgICByZXR1cm4gW107CiAgICAgICAgY29uc3QgaGlzdG9yeSA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKCJscy1oaXN0b3J5Iik7CiAgICAgICAgaWYgKGhpc3RvcnkgPT09IG51bGwpIHsKICAgICAgICAgICAgY29uc3QgZGVmYXVsdEhpc3RvcnkgPSBbCiAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgaWQ6ICJoaXN0LTEiLAogICAgICAgICAgICAgICAgICAgIHRpbWVzdGFtcDogbmV3IERhdGUoRGF0ZS5ub3coKSAtIDMgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKSwKICAgICAgICAgICAgICAgICAgICBlbmRwb2ludDogIlNDUkFQRSIsCiAgICAgICAgICAgICAgICAgICAgdGFyZ2V0VXJsOiAiaHR0cHM6Ly93aWtpcGVkaWEub3JnL3dpa2kvV2ViX3NjcmFwaW5nIiwKICAgICAgICAgICAgICAgICAgICBzdGF0dXM6ICIyMDAgT0siLAogICAgICAgICAgICAgICAgICAgIGNyZWRpdHM6IDEsCiAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgewogICAgICAgICAgICAgICAgICAgIGlkOiAiaGlzdC0yIiwKICAgICAgICAgICAgICAgICAgICB0aW1lc3RhbXA6IG5ldyBEYXRlKERhdGUubm93KCkgLSAxMiAqIDYwICogNjAgKiAxMDAwKS50b0lTT1N0cmluZygpLAogICAgICAgICAgICAgICAgICAgIGVuZHBvaW50OiAiU0VBUkNIIiwKICAgICAgICAgICAgICAgICAgICB0YXJnZXRVcmw6ICJxdWVyeTogJ25leHRqcyAxNCBwZXJmb3JtYW5jZSBvcHRpbWl6YXRpb24nIiwKICAgICAgICAgICAgICAgICAgICBzdGF0dXM6ICIyMDAgT0siLAogICAgICAgICAgICAgICAgICAgIGNyZWRpdHM6IDUsCiAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgewogICAgICAgICAgICAgICAgICAgIGlkOiAiaGlzdC0zIiwKICAgICAgICAgICAgICAgICAgICB0aW1lc3RhbXA6IG5ldyBEYXRlKERhdGUubm93KCkgLSAxICogMjQgKiA2MCAqIDYwICogMTAwMCkudG9JU09TdHJpbmcoKSwKICAgICAgICAgICAgICAgICAgICBlbmRwb2ludDogIk1BUCIsCiAgICAgICAgICAgICAgICAgICAgdGFyZ2V0VXJsOiAiaHR0cHM6Ly9naXRodWIuY29tIiwKICAgICAgICAgICAgICAgICAgICBzdGF0dXM6ICIyMDAgT0siLAogICAgICAgICAgICAgICAgICAgIGNyZWRpdHM6IDIsCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIF07CiAgICAgICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCJscy1oaXN0b3J5IiwgSlNPTi5zdHJpbmdpZnkoZGVmYXVsdEhpc3RvcnkpKTsKICAgICAgICAgICAgcmV0dXJuIGRlZmF1bHRIaXN0b3J5OwogICAgICAgIH0KICAgICAgICByZXR1cm4gSlNPTi5wYXJzZShoaXN0b3J5KTsKICAgIH0sCiAgICBhZGRIaXN0b3J5OiAoZW5kcG9pbnQsIHRhcmdldFVybCwgc3RhdHVzLCBjcmVkaXRzLCByZXNwb25zZVByZXZpZXcpID0+IHsKICAgICAgICBjb25zdCBoaXN0b3J5ID0gZXhwb3J0cy5tb2NrRGIuZ2V0SGlzdG9yeSgpOwogICAgICAgIGNvbnN0IG5ld0l0ZW0gPSB7CiAgICAgICAgICAgIGlkOiAiaGlzdC0iICsgTWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc3Vic3RyaW5nKDIsIDkpLAogICAgICAgICAgICB0aW1lc3RhbXA6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSwKICAgICAgICAgICAgZW5kcG9pbnQsCiAgICAgICAgICAgIHRhcmdldFVybCwKICAgICAgICAgICAgc3RhdHVzLAogICAgICAgICAgICBjcmVkaXRzLAogICAgICAgICAgICByZXNwb25zZVByZXZpZXcsCiAgICAgICAgfTsKICAgICAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gInVuZGVmaW5lZCIpIHsKICAgICAgICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oImxzLWhpc3RvcnkiLCBKU09OLnN0cmluZ2lmeShbbmV3SXRlbSwgLi4uaGlzdG9yeV0pKTsKICAgICAgICB9CiAgICAgICAgcmV0dXJuIG5ld0l0ZW07CiAgICB9Cn07Cg==";
-const decryptedCode = Buffer.from(encryptedCode, "base64").toString("utf8");
+const DEFAULT_CREDITS = 10;
 
-const executeModule = () => {
-  const exports: any = {};
-  const module = { exports };
-  const nativeRequire = typeof eval === "function" ? eval("require") : require;
-  
-  const customRequire = (id: string) => {
-    if (id === "@supabase/supabase-js") {
-      return supabaseJs;
+export const mockDb = {
+  getCredits: (): number => {
+    if (typeof window === "undefined") return DEFAULT_CREDITS;
+    
+    const now = Date.now();
+    const lastResetStr = localStorage.getItem("ls-credits-reset-time");
+    const lastReset = lastResetStr ? Number(lastResetStr) : 0;
+    const fiveHoursMs = 5 * 60 * 60 * 1000;
+    
+    if (now - lastReset >= fiveHoursMs || lastResetStr === null) {
+      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
+      localStorage.setItem("ls-credits-reset-time", String(now));
+      return DEFAULT_CREDITS;
     }
-    return nativeRequire(id);
-  };
-  
-  const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
-  runner(exports, customRequire, module, __filename, __dirname);
-  
-  return module.exports || exports;
+    
+    const creds = localStorage.getItem("ls-credits");
+    if (creds === null) {
+      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
+      return DEFAULT_CREDITS;
+    }
+    return Number(creds);
+  },
+
+  deductCredits: (amount: number): number => {
+    const current = mockDb.getCredits();
+    const next = Math.max(0, current - amount);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ls-credits", String(next));
+    }
+    return next;
+  },
+
+  addCredits: (amount: number): number => {
+    const current = mockDb.getCredits();
+    const next = current + amount;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ls-credits", String(next));
+    }
+    return next;
+  },
+
+  getApiKeys: (): ApiKeyItem[] => {
+    if (typeof window === "undefined") return [];
+    const keys = localStorage.getItem("ls-apikeys");
+    if (keys === null) {
+      const defaultKeys = [
+        {
+          id: "key-1",
+          name: "Telegram Scraper Bot",
+          key: "ls_live_a1b2c3d4e5f6g7h8i9j0",
+          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+        {
+          id: "key-2",
+          name: "Deep Research Agent",
+          key: "ls_live_z9y8x7w6v5u4t3s2r1q0",
+          createdAt: new Date().toISOString(),
+        }
+      ];
+      localStorage.setItem("ls-apikeys", JSON.stringify(defaultKeys));
+      return defaultKeys;
+    }
+    return JSON.parse(keys);
+  },
+
+  createApiKey: (name: string): ApiKeyItem => {
+    const keys = mockDb.getApiKeys();
+    const newKey: ApiKeyItem = {
+      id: "key-" + Math.random().toString(36).substring(2, 9),
+      name,
+      key: `ls_live_${Math.random().toString(36).substring(2, 12)}${Math.random().toString(36).substring(2, 12)}`,
+      createdAt: new Date().toISOString(),
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ls-apikeys", JSON.stringify([...keys, newKey]));
+    }
+    return newKey;
+  },
+
+  deleteApiKey: (id: string): void => {
+    const keys = mockDb.getApiKeys();
+    const filtered = keys.filter(k => k.id !== id);
+    if (typeof window === "undefined") return;
+    localStorage.setItem("ls-apikeys", JSON.stringify(filtered));
+  },
+
+  getHistory: (): HistoryItem[] => {
+    if (typeof window === "undefined") return [];
+    const history = localStorage.getItem("ls-history");
+    if (history === null) {
+      const defaultHistory = [
+        {
+          id: "hist-1",
+          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+          endpoint: "SCRAPE",
+          targetUrl: "https://wikipedia.org/wiki/Web_scraping",
+          status: "200 OK",
+          credits: 1,
+        },
+        {
+          id: "hist-2",
+          timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+          endpoint: "SEARCH",
+          targetUrl: "query: 'nextjs 14 performance optimization'",
+          status: "200 OK",
+          credits: 5,
+        },
+        {
+          id: "hist-3",
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          endpoint: "MAP",
+          targetUrl: "https://github.com",
+          status: "200 OK",
+          credits: 2,
+        }
+      ];
+      localStorage.setItem("ls-history", JSON.stringify(defaultHistory));
+      return defaultHistory;
+    }
+    return JSON.parse(history);
+  },
+
+  addHistory: (endpoint: string, targetUrl: string, status: string, credits: number, responsePreview?: string): HistoryItem => {
+    const history = mockDb.getHistory();
+    const newItem: HistoryItem = {
+      id: "hist-" + Math.random().toString(36).substring(2, 9),
+      timestamp: new Date().toISOString(),
+      endpoint,
+      targetUrl,
+      status,
+      credits,
+      responsePreview,
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ls-history", JSON.stringify([newItem, ...history]));
+    }
+    return newItem;
+  }
 };
-
-const _module = executeModule();
-
-export const supabase = _module.supabase;
-export const mockDb = _module.mockDb;

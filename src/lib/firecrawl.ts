@@ -1,24 +1,105 @@
-// 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
-// Decompilation or manual reverse engineering of this file is restricted.
+const BASE_URL = "https://api.firecrawl.dev";
 
-const encryptedCode = "InVzZSBzdHJpY3QiOwpPYmplY3QuZGVmaW5lUHJvcGVydHkoZXhwb3J0cywgIl9fZXNNb2R1bGUiLCB7IHZhbHVlOiB0cnVlIH0pOwpleHBvcnRzLnNjcmFwZVVybCA9IHNjcmFwZVVybDsKZXhwb3J0cy5zZWFyY2hXZWIgPSBzZWFyY2hXZWI7CmV4cG9ydHMuY3Jhd2xVcmwgPSBjcmF3bFVybDsKZXhwb3J0cy5nZXRDcmF3bEpvYlN0YXR1cyA9IGdldENyYXdsSm9iU3RhdHVzOwpleHBvcnRzLm1hcFVybCA9IG1hcFVybDsKY29uc3QgQkFTRV9VUkwgPSAiaHR0cHM6Ly9hcGkuZmlyZWNyYXdsLmRldiI7CmZ1bmN0aW9uIGdldEhlYWRlcnMoY3VzdG9tQXBpS2V5KSB7CiAgICBjb25zdCBhcGlLZXkgPSBjdXN0b21BcGlLZXkgfHwgcHJvY2Vzcy5lbnYuRklSRUNSQVdMX0FQSV9LRVk7CiAgICBpZiAoIWFwaUtleSkgewogICAgICAgIHRocm93IG5ldyBFcnJvcigiRmlyZWNyYXdsIEFQSSBLZXkgaXMgcmVxdWlyZWQuIFBsZWFzZSByZXRyaWV2ZSB5b3VyIEFQSSBrZXkgZnJvbSBmaXJlY3Jhd2wuZGV2IGFuZCBwYXN0ZSBpdCBpbiB0aGUgUGxheWdyb3VuZCBTZXR0aW5ncy4iKTsKICAgIH0KICAgIHJldHVybiB7CiAgICAgICAgIkNvbnRlbnQtVHlwZSI6ICJhcHBsaWNhdGlvbi9qc29uIiwKICAgICAgICBBdXRob3JpemF0aW9uOiBgQmVhcmVyICR7YXBpS2V5fWAsCiAgICB9Owp9CmFzeW5jIGZ1bmN0aW9uIHNjcmFwZVVybCh1cmwsIGZvcm1hdHMgPSBbIm1hcmtkb3duIl0sIGFjdGlvbnMsIGN1c3RvbUFwaUtleSkgewogICAgLy8gRW5zdXJlIHdlIGRvbid0IHNlbmQgYm90aCBzY3JlZW5zaG90IGFuZCBzY3JlZW5zaG90QGZ1bGxQYWdlIHRvIGF2b2lkIDQwMCBCYWQgUmVxdWVzdAogICAgbGV0IGNsZWFuRm9ybWF0cyA9IFsuLi5mb3JtYXRzXTsKICAgIGlmIChjbGVhbkZvcm1hdHMuaW5jbHVkZXMoInNjcmVlbnNob3RAZnVsbFBhZ2UiKSkgewogICAgICAgIGNsZWFuRm9ybWF0cyA9IGNsZWFuRm9ybWF0cy5maWx0ZXIoKGYpID0+IGYgIT09ICJzY3JlZW5zaG90Iik7CiAgICB9CiAgICAvLyBNYXAgc2NyZWVuc2hvdEBmdWxsUGFnZSBpbnRvIG9iamVjdCBmb3JtYXQgZXhwZWN0ZWQgYnkgRmlyZWNyYXdsIHYxCiAgICBjb25zdCBtYXBwZWRGb3JtYXRzID0gY2xlYW5Gb3JtYXRzLm1hcCgoZikgPT4gewogICAgICAgIGlmIChmID09PSAic2NyZWVuc2hvdEBmdWxsUGFnZSIpIHsKICAgICAgICAgICAgcmV0dXJuIHsgdHlwZTogInNjcmVlbnNob3QiLCBmdWxsUGFnZTogdHJ1ZSB9OwogICAgICAgIH0KICAgICAgICByZXR1cm4gZjsKICAgIH0pOwogICAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goYCR7QkFTRV9VUkx9L3YxL3NjcmFwZWAsIHsKICAgICAgICBtZXRob2Q6ICJQT1NUIiwKICAgICAgICBoZWFkZXJzOiBnZXRIZWFkZXJzKGN1c3RvbUFwaUtleSksCiAgICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoewogICAgICAgICAgICB1cmwsCiAgICAgICAgICAgIGZvcm1hdHM6IG1hcHBlZEZvcm1hdHMsCiAgICAgICAgICAgIC4uLihhY3Rpb25zICYmIGFjdGlvbnMubGVuZ3RoID4gMCA/IHsgYWN0aW9ucyB9IDoge30pLAogICAgICAgIH0pLAogICAgfSk7CiAgICBpZiAoIXJlcy5vaykgewogICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHJlcy50ZXh0KCk7CiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogICAgfQogICAgcmV0dXJuIHJlcy5qc29uKCk7Cn0KYXN5bmMgZnVuY3Rpb24gc2VhcmNoV2ViKHF1ZXJ5LCBsaW1pdCA9IDUsIGN1c3RvbUFwaUtleSkgewogICAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goYCR7QkFTRV9VUkx9L3YxL3NlYXJjaGAsIHsKICAgICAgICBtZXRob2Q6ICJQT1NUIiwKICAgICAgICBoZWFkZXJzOiBnZXRIZWFkZXJzKGN1c3RvbUFwaUtleSksCiAgICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoeyBxdWVyeSwgbGltaXQgfSksCiAgICB9KTsKICAgIGlmICghcmVzLm9rKSB7CiAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcmVzLnRleHQoKTsKICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpcmVjcmF3bCBBUEkgZXJyb3IgKHN0YXR1cyAke3Jlcy5zdGF0dXN9KTogJHtlcnJvclRleHR9YCk7CiAgICB9CiAgICByZXR1cm4gcmVzLmpzb24oKTsKfQphc3luYyBmdW5jdGlvbiBjcmF3bFVybCh1cmwsIG9wdGlvbnMgPSB7fSwgY3VzdG9tQXBpS2V5KSB7CiAgICBjb25zdCByZXMgPSBhd2FpdCBmZXRjaChgJHtCQVNFX1VSTH0vdjEvY3Jhd2xgLCB7CiAgICAgICAgbWV0aG9kOiAiUE9TVCIsCiAgICAgICAgaGVhZGVyczogZ2V0SGVhZGVycyhjdXN0b21BcGlLZXkpLAogICAgICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsgdXJsLCAuLi5vcHRpb25zIH0pLAogICAgfSk7CiAgICBpZiAoIXJlcy5vaykgewogICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHJlcy50ZXh0KCk7CiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogICAgfQogICAgcmV0dXJuIHJlcy5qc29uKCk7Cn0KYXN5bmMgZnVuY3Rpb24gZ2V0Q3Jhd2xKb2JTdGF0dXMoam9iSWQsIGN1c3RvbUFwaUtleSkgewogICAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goYCR7QkFTRV9VUkx9L3YxL2NyYXdsLyR7am9iSWR9YCwgewogICAgICAgIG1ldGhvZDogIkdFVCIsCiAgICAgICAgaGVhZGVyczogZ2V0SGVhZGVycyhjdXN0b21BcGlLZXkpLAogICAgfSk7CiAgICBpZiAoIXJlcy5vaykgewogICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHJlcy50ZXh0KCk7CiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogICAgfQogICAgcmV0dXJuIHJlcy5qc29uKCk7Cn0KYXN5bmMgZnVuY3Rpb24gbWFwVXJsKHVybCwgb3B0aW9ucyA9IHt9LCBjdXN0b21BcGlLZXkpIHsKICAgIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoKGAke0JBU0VfVVJMfS92MS9tYXBgLCB7CiAgICAgICAgbWV0aG9kOiAiUE9TVCIsCiAgICAgICAgaGVhZGVyczogZ2V0SGVhZGVycyhjdXN0b21BcGlLZXkpLAogICAgICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KHsgdXJsLCAuLi5vcHRpb25zIH0pLAogICAgfSk7CiAgICBpZiAoIXJlcy5vaykgewogICAgICAgIGNvbnN0IGVycm9yVGV4dCA9IGF3YWl0IHJlcy50ZXh0KCk7CiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaXJlY3Jhd2wgQVBJIGVycm9yIChzdGF0dXMgJHtyZXMuc3RhdHVzfSk6ICR7ZXJyb3JUZXh0fWApOwogICAgfQogICAgcmV0dXJuIHJlcy5qc29uKCk7Cn0K";
-const decryptedCode = Buffer.from(encryptedCode, "base64").toString("utf8");
+function getHeaders(customApiKey?: string) {
+  const apiKey = customApiKey || process.env.FIRECRAWL_API_KEY;
+  if (!apiKey) {
+    throw new Error("Firecrawl API Key is required. Please retrieve your API key from firecrawl.dev and paste it in the Playground Settings.");
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  };
+}
 
-const executeModule = () => {
-  const exports: any = {};
-  const module = { exports };
-  const nativeRequire = typeof eval === "function" ? eval("require") : require;
-  
-  const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
-  runner(exports, nativeRequire, module, __filename, __dirname);
-  
-  return module.exports || exports;
-};
+export async function scrapeUrl(url: string, formats: any[] = ["markdown"], actions?: any[], customApiKey?: string) {
+  // Ensure we don't send both screenshot and screenshot@fullPage to avoid 400 Bad Request
+  let cleanFormats = [...formats];
+  if (cleanFormats.includes("screenshot@fullPage")) {
+    cleanFormats = cleanFormats.filter((f) => f !== "screenshot");
+  }
 
-const _module = executeModule();
+  // Map screenshot@fullPage into object format expected by Firecrawl v1
+  const mappedFormats = cleanFormats.map((f) => {
+    if (f === "screenshot@fullPage") {
+      return { type: "screenshot", fullPage: true };
+    }
+    return f;
+  });
 
-export const scrapeUrl = _module.scrapeUrl;
-export const searchWeb = _module.searchWeb;
-export const crawlUrl = _module.crawlUrl;
-export const getCrawlJobStatus = _module.getCrawlJobStatus;
-export const mapUrl = _module.mapUrl;
+  const res = await fetch(`${BASE_URL}/v1/scrape`, {
+    method: "POST",
+    headers: getHeaders(customApiKey),
+    body: JSON.stringify({
+      url,
+      formats: mappedFormats,
+      ...(actions && actions.length > 0 ? { actions } : {}),
+    }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
+  }
+
+  return res.json();
+}
+
+export async function searchWeb(query: string, limit: number = 5, customApiKey?: string) {
+  const res = await fetch(`${BASE_URL}/v1/search`, {
+    method: "POST",
+    headers: getHeaders(customApiKey),
+    body: JSON.stringify({ query, limit }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
+  }
+
+  return res.json();
+}
+
+export async function crawlUrl(url: string, options: any = {}, customApiKey?: string) {
+  const res = await fetch(`${BASE_URL}/v1/crawl`, {
+    method: "POST",
+    headers: getHeaders(customApiKey),
+    body: JSON.stringify({ url, ...options }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
+  }
+
+  return res.json();
+}
+
+export async function getCrawlJobStatus(jobId: string, customApiKey?: string) {
+  const res = await fetch(`${BASE_URL}/v1/crawl/${jobId}`, {
+    method: "GET",
+    headers: getHeaders(customApiKey),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
+  }
+
+  return res.json();
+}
+
+export async function mapUrl(url: string, options: any = {}, customApiKey?: string) {
+  const res = await fetch(`${BASE_URL}/v1/map`, {
+    method: "POST",
+    headers: getHeaders(customApiKey),
+    body: JSON.stringify({ url, ...options }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Firecrawl API error (status ${res.status}): ${errorText}`);
+  }
+
+  return res.json();
+}
+
