@@ -1,86 +1,92 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Terminal, GitBranch, Mail, Lock, Globe, ArrowRight, ShieldCheck } from "lucide-react";
-import { useAppStore } from "@/lib/store";
+import { Mail, Lock, ArrowRight, ShieldCheck, Terminal, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Signin() {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("lean@leanian.studio");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("admin@leanscrape.dev");
+  const [password, setPassword] = useState("admin");
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-  // Detect GitHub OAuth callback
-  React.useEffect(() => {
+  useEffect(() => {
+    // Cek parameter error dari Dev Console locking simulation
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const code = params.get("code");
-      if (code) {
-        setLoading(true);
-        fetch("/api/auth/github", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success && data.user) {
-            localStorage.setItem("ls-user", JSON.stringify(data.user));
-            router.push("/playground");
-          } else {
-            alert(data.error || "GitHub Authentication failed");
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error(err);
-          setLoading(false);
-        });
+      if (params.get("error") === "AccountBlockedByDevConsole") {
+        setErrorMsg("SECURITY ALERT: Session terminated by Developer Lock Command.");
       }
     }
-  }, [router]);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
     setLoading(true);
 
-    // Simulasi login sukses
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ls-user", JSON.stringify({ email }));
-      }
-      setLoading(false);
-      router.push("/playground"); // Redirect directly to playground
-    }, 1000);
-  };
+    const isDevEmail = email === "admin@leanscrape.dev" || email === "dev@leanscrape.dev";
 
-  const handleGithubLogin = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    
-    if (clientId) {
-      const redirectUri = window.location.origin + "/signin";
-      window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=read:user&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    } else {
-      setLoading(true);
-      // Simulasi GitHub OAuth sukses jika Client ID tidak diset
-      setTimeout(() => {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("ls-user", JSON.stringify({ 
-            email: "leangtg123-art@github.com",
-            name: "leangtg123-art",
-            provider: "github",
-            avatar: "https://avatars.githubusercontent.com/u/237972227?v=4"
-          }));
+    setTimeout(() => {
+      if (isSignUp) {
+        // Mode registrasi simulasi
+        if (isDevEmail) {
+          setLoading(false);
+          setErrorMsg("SECURITY RESTRICTION: Cannot register developer accounts from standard panel.");
+          return;
         }
+        if (password.length < 6) {
+          setLoading(false);
+          setErrorMsg("REGISTRATION ERROR: Password must be at least 6 characters.");
+          return;
+        }
+        
+        setSuccessMsg("ACCOUNT PROVISIONED! Switching to Sign In...");
+        setIsSignUp(false);
         setLoading(false);
-        router.push("/playground");
-      }, 1000);
-    }
+      } else {
+        // Mode login
+        if (isDevEmail) {
+          if (password === "admin" || password === "devadmin123") {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("ls-user", JSON.stringify({ 
+                email, 
+                role: "developer",
+                name: "LeanScrape Admin",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop"
+              }));
+            }
+            setLoading(false);
+            router.push("/dashboard/developer"); // Devs go directly to Developer Console!
+          } else {
+            setLoading(false);
+            setErrorMsg("ACCESS DENIED: Invalid developer decryption keys.");
+          }
+        } else {
+          // Normal user authentication
+          if (password.length >= 6) {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("ls-user", JSON.stringify({ 
+                email, 
+                role: "user",
+                name: email.split("@")[0]
+              }));
+            }
+            setLoading(false);
+            router.push("/playground");
+          } else {
+            setLoading(false);
+            setErrorMsg("ACCESS DENIED: Password is too short.");
+          }
+        }
+      }
+    }, 1000);
   };
 
   return (
@@ -97,7 +103,7 @@ export default function Signin() {
         <div className="corner-brackets" />
 
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
           <Link href="/" className="inline-flex items-center gap-2 group font-mono mb-6">
             <div className="w-7 h-7 rounded bg-primary/10 border border-primary/30 flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary fill-none stroke-current stroke-2">
@@ -114,34 +120,48 @@ export default function Signin() {
           </p>
         </div>
 
+        {/* Alerts */}
+        {errorMsg && (
+          <div className="mb-4 p-3 rounded border border-red-500/20 bg-red-500/5 text-red-400 font-mono text-[10px] flex items-start gap-2 text-left leading-relaxed">
+            <AlertCircle size={14} className="shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+        {successMsg && (
+          <div className="mb-4 p-3 rounded border border-green-500/20 bg-green-500/5 text-green-400 font-mono text-[10px] flex items-start gap-2 text-left leading-relaxed">
+            <ShieldCheck size={14} className="shrink-0 mt-0.5" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 font-mono text-sm">
           
           <div className="space-y-2">
-            <label className="block text-gray-400">Email Address</label>
+            <label className="block text-gray-400 text-xs">Email Address</label>
             <div className="relative">
-              <Mail size={14} className="absolute left-3 top-3 text-text-muted" />
+              <Mail size={14} className="absolute left-3 top-3.5 text-text-muted" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-bg-elevated/40 border border-border rounded pl-9 pr-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary"
+                className="w-full bg-bg-elevated/40 border border-border rounded pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-primary font-mono"
                 placeholder="developer@leanscrape.dev"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-gray-400">Password</label>
+            <label className="block text-gray-400 text-xs">Password</label>
             <div className="relative">
-              <Lock size={14} className="absolute left-3 top-3 text-text-muted" />
+              <Lock size={14} className="absolute left-3 top-3.5 text-text-muted" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-bg-elevated/40 border border-border rounded pl-9 pr-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary"
+                className="w-full bg-bg-elevated/40 border border-border rounded pl-9 pr-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-primary font-mono"
                 placeholder="••••••••"
               />
             </div>
@@ -150,7 +170,7 @@ export default function Signin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded bg-primary hover:shadow-glow text-white font-bold transition-all flex items-center justify-center gap-1.5 focus:outline-none"
+            className="w-full py-2.5 rounded bg-primary hover:shadow-glow text-white font-bold transition-all flex items-center justify-center gap-1.5 focus:outline-none text-xs"
           >
             {loading ? (
               <span className="animate-pulse">DECODING_AUTH...</span>
@@ -163,29 +183,36 @@ export default function Signin() {
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="relative my-6 text-center font-mono text-[9px] text-text-muted">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/40"></div></div>
-          <span className="relative bg-[#0B0A0E] px-2">OR RUN OAUTH</span>
-        </div>
-
-        {/* Social Buttons */}
-        <div className="font-mono text-[10px]">
-          <button 
-            onClick={handleGithubLogin}
-            className="w-full flex items-center justify-center gap-1.5 py-2 rounded border border-border bg-bg-elevated/40 hover:bg-white/5 transition-colors text-white"
-          >
-            <GitBranch size={12} />
-            <span>GITHUB OAUTH</span>
-          </button>
+        {/* Developer accounts info box */}
+        <div className="mt-6 border border-border/30 bg-bg-elevated/20 p-4 rounded text-left font-mono text-[9px] text-text-muted leading-relaxed">
+          <div className="flex items-center gap-1.5 text-accent font-bold mb-1.5 uppercase tracking-wider">
+            <Terminal size={10} />
+            <span>Developer Sandbox Keys:</span>
+          </div>
+          <p>• Email: <span className="text-white select-all">admin@leanscrape.dev</span></p>
+          <p>• Password: <span className="text-white select-all">admin</span></p>
+          <p className="mt-1.5 text-gray-500">
+            Gunakan kredensial di atas untuk memicu mode Admin Developer Console dan mengakses 20+ panel kontrol internal.
+          </p>
         </div>
 
         {/* Switch mode */}
         <div className="text-center mt-6 text-xs font-sans text-gray-400">
           {isSignUp ? "Already have an account? " : "New to LeanScrape? "}
           <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary font-bold hover:underline font-mono text-xs"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setErrorMsg("");
+              setSuccessMsg("");
+              if (!isSignUp) {
+                setEmail("tester@leanscrape.dev");
+                setPassword("tester123");
+              } else {
+                setEmail("admin@leanscrape.dev");
+                setPassword("admin");
+              }
+            }}
+            className="text-primary font-bold hover:underline font-mono text-xs ml-1"
           >
             {isSignUp ? "SIGN_IN" : "CREATE_ACCOUNT"}
           </button>

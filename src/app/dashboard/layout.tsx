@@ -18,6 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [credits, setCredits] = useState(1000);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("developer@leanscrape.dev");
+  const [userRole, setUserRole] = useState("user");
 
   useEffect(() => {
     // Cek sign-in status
@@ -26,12 +27,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.push("/signin");
       return;
     }
-    setUserEmail(JSON.parse(user).email);
+    const parsed = JSON.parse(user);
+    setUserEmail(parsed.email);
+    setUserRole(parsed.role || "user");
     setCredits(mockDb.getCredits());
 
     // Listener untuk sinkronisasi kredit saat runtime
     const handleStorageChange = () => {
       setCredits(mockDb.getCredits());
+      
+      // Update role jika user diganti di tab lain
+      const u = localStorage.getItem("ls-user");
+      if (u) {
+        const p = JSON.parse(u);
+        setUserRole(p.role || "user");
+      }
     };
     window.addEventListener("storage", handleStorageChange);
     const interval = setInterval(handleStorageChange, 2000); // Polling internal gratis
@@ -53,6 +63,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Usage Credits", href: "/dashboard/usage", icon: BarChart3 },
     { name: "Request History", href: "/dashboard/history", icon: History },
   ];
+
+  if (userRole === "developer") {
+    navItems.push({ name: "Dev Console", href: "/dashboard/developer", icon: Terminal });
+  }
 
   return (
     <div className="min-h-screen bg-bg text-white font-sans flex flex-col md:flex-row">
