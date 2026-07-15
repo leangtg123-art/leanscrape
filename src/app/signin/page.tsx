@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 export default function Signin() {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("admin@leanscrape.dev");
-  const [password, setPassword] = useState("admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -47,6 +47,9 @@ export default function Signin() {
           return;
         }
         
+        if (typeof window !== "undefined") {
+          localStorage.setItem("ls-credits", "10"); // Force credits to 10 for new user!
+        }
         setSuccessMsg("ACCOUNT PROVISIONED! Switching to Sign In...");
         setIsSignUp(false);
         setLoading(false);
@@ -77,6 +80,7 @@ export default function Signin() {
                 role: "user",
                 name: email.split("@")[0]
               }));
+              localStorage.setItem("ls-credits", "10"); // Force credits to 10 for normal user!
             }
             setLoading(false);
             router.push("/playground");
@@ -204,13 +208,8 @@ export default function Signin() {
               setIsSignUp(!isSignUp);
               setErrorMsg("");
               setSuccessMsg("");
-              if (!isSignUp) {
-                setEmail("tester@leanscrape.dev");
-                setPassword("tester123");
-              } else {
-                setEmail("admin@leanscrape.dev");
-                setPassword("admin");
-              }
+              setEmail("");
+              setPassword("");
             }}
             className="text-primary font-bold hover:underline font-mono text-xs ml-1"
           >

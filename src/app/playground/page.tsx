@@ -154,6 +154,7 @@ export default function Playground() {
   const [onlyMainContent, setOnlyMainContent] = useState<boolean>(true);
   const [waitForDelay, setWaitForDelay] = useState<number>(0);
   const [mobileEmulation, setMobileEmulation] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState("user");
 
   // API Key Manager States
   const [savedApiKeys, setSavedApiKeys] = useState<FirecrawlKey[]>([]);
@@ -186,6 +187,9 @@ export default function Playground() {
       const user = localStorage.getItem("ls-user");
       if (!user) {
         router.push("/signin");
+      } else {
+        const parsed = JSON.parse(user);
+        setUserRole(parsed.role || "user");
       }
     }
   }, [router]);
@@ -1578,6 +1582,19 @@ Body:
         </div>
 
       </div>
+
+      {/* Floating Developer Console Access Button */}
+      {userRole === "developer" && (
+        <div className="fixed bottom-6 right-6 z-50 animate-pulse bg-black rounded-full shadow-2xl border border-accent">
+          <button
+            onClick={() => router.push("/dashboard/developer")}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-accent hover:bg-accent hover:text-black transition-all text-xs font-mono font-bold focus:outline-none"
+          >
+            <Terminal size={14} className="text-accent" />
+            <span>DEV CONSOLE ACTIVE</span>
+          </button>
+        </div>
+      )}
     </main>
   );
 }
