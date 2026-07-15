@@ -1030,8 +1030,7 @@ Body:
                   Stealth cloner engine. Clone assets, offline preview, ZIP files & AI orchestration.
                 </span>
               </button>
-            </div>          </div>
-          </div>
+            </div>
 
           {/* Sidebar Riwayat (Tampil di desktop) */}
           <div className="hidden lg:block border-t border-border/40 pt-6 mt-6">
