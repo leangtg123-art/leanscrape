@@ -12,7 +12,7 @@ import { mockDb, HistoryItem } from "@/lib/supabase";
 import ThemeSwitcher from "@/components/theme/ThemeSwitcher";
 import { cn } from "@/lib/utils";
 
-type EndpointType = "scrape" | "search" | "crawl" | "map";
+type EndpointType = "scrape" | "search" | "crawl" | "map" | "clone";
 
 interface FirecrawlKey {
   id: string;
@@ -158,6 +158,7 @@ export default function Playground() {
   const [crawlOptions, setCrawlOptions] = useState({ allowExternalLinks: false, ignoreSitemap: false, onlyMainContent: false });
   const [mapOptions, setMapOptions] = useState({ includeSubdomains: false, search: "", ignoreSitemap: false });
   const [searchLimit, setSearchLimit] = useState(10);
+  const [cloneOptions, setCloneOptions] = useState({ depth: 2, forceTool: "auto" });
 
   // API Key Manager States
   const [savedApiKeys, setSavedApiKeys] = useState<FirecrawlKey[]>([]);
@@ -376,6 +377,15 @@ export default function Playground() {
         ignoreSitemap: mapOptions.ignoreSitemap,
         ...(mapOptions.search ? { search: mapOptions.search } : {}),
       };
+    } else if (activeTab === "clone") {
+      bodyPayload = {
+        url: targetUrl,
+        options: {
+          depth: cloneOptions.depth,
+          force_tool: cloneOptions.forceTool,
+          include_assets: true
+        }
+      };
     }
 
     const startTime = Date.now();
@@ -398,6 +408,67 @@ export default function Playground() {
 
       if (!response.ok || !json.success) {
         throw new Error(json.error || `HTTP error! status: ${response.status}`);
+      }
+
+      if (activeTab === "clone") {
+        const jobId = json.data.project_id;
+        addDevLog(`[CLONE] Job #${jobId} queued. Starting status polling...`);
+        setProgressPercent(10);
+        
+        const pollInterval = setInterval(async () => {
+          try {
+            const pollRes = await fetch(`/api/leanscrape/clone-status?jobId=${jobId}`);
+            if (pollRes.ok) {
+              const pollJson = await pollRes.json();
+              if (pollJson.success) {
+                const statusData = pollJson.data;
+                setProgressPercent(statusData.progress_percent || 10);
+                addDevLog(`[CLONE] Stage: ${statusData.current_stage || "running"} (${statusData.progress_percent}%)`);
+                
+                if (statusData.status === "completed") {
+                  clearInterval(pollInterval);
+                  const resultRes = await fetch(`/api/leanscrape/clone-result?jobId=${jobId}`);
+                  if (resultRes.ok) {
+                    const resultJson = await resultRes.json();
+                    if (resultJson.success) {
+                      setResultData(resultJson.data);
+                      setStatus("success");
+                      addDevLog(`[SUCCESS] Cloned website successfully.`);
+                      
+                      // Deduct credits
+                      const nextCredits = mockDb.deductCredits(json.creditsDeducted);
+                      setCredits(nextCredits);
+                      if (nextCredits <= 0) {
+                        setShowLimitModal(true);
+                      }
+                      
+                      // Log history
+                      mockDb.addHistory(
+                        "CLONE",
+                        targetUrl,
+                        "200 OK",
+                        json.creditsDeducted,
+                        JSON.stringify(resultJson.data)
+                      );
+                      setHistory(mockDb.getHistory());
+                    }
+                  }
+                } else if (statusData.status === "failed") {
+                  clearInterval(pollInterval);
+                  setStatus("error");
+                  setErrorMsg("Kloning gagal karena error internal di decant engine.");
+                  addDevLog(`[ERROR] Cloner failed.`);
+                }
+              }
+            }
+          } catch (pollErr: any) {
+            console.error("Polling error:", pollErr);
+          }
+        }, 1500);
+
+        setResultTab("markdown");
+        setMobileView("result");
+        return;
       }
 
       // Hitung ukuran payload
@@ -940,6 +1011,25 @@ Body:
                   Sitemap discovery. Extract link list hierarchical structure of domains.
                 </span>
               </button>
+
+              {/* Button Clone */}
+              <button
+                onClick={() => { setActiveTab("clone"); setMobileView("form"); }}
+                className={cn(
+                  "w-full flex flex-col gap-1.5 px-4 py-3 rounded text-left border transition-all shrink-0 lg:shrink select-none",
+                  activeTab === "clone"
+                    ? "border-primary bg-primary/10 text-white shadow-glow"
+                    : "border-border/30 text-text-muted bg-black/20 hover:bg-white/5 hover:text-white hover:border-border/60"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Database size={14} className={activeTab === "clone" ? "text-primary animate-pulse" : ""} />
+                  <span className="text-xs font-bold font-mono tracking-wide">POST /v2/clone</span>
+                </div>
+                <span className="hidden lg:block text-[9px] text-gray-500 font-sans leading-relaxed">
+                  Stealth cloner engine. Clone assets, offline preview, ZIP files & AI orchestration.
+                </span>
+              </button>
             </div>          </div>
           </div>
 
@@ -1291,6 +1381,44 @@ Body:
                 </div>
               )}
 
+              {/* Clone Options */}
+              {activeTab === "clone" && (
+                <div className="border border-border/20 bg-bg-elevated/10 p-3 rounded space-y-3 font-sans text-xs">
+                  <div className="text-[10px] font-mono text-accent uppercase tracking-wider">// CLONE OPTIONS</div>
+                  <div className="space-y-1">
+                    <label className="block text-gray-400 text-[10px] font-mono">Max Depth (levels)</label>
+                    <input 
+                      type="number" 
+                      min="1" 
+                      max="5" 
+                      value={cloneOptions.depth} 
+                      onChange={(e) => setCloneOptions(p => ({...p, depth: Number(e.target.value)}))}
+                      className="w-full text-xs font-mono bg-[#08070A] border border-border rounded px-2.5 py-1.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary" 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-gray-400 text-[10px] font-mono">Engine Tool</label>
+                    <div className="flex gap-1 font-mono">
+                      {["auto", "decant", "site-cloner"].map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setCloneOptions(p => ({...p, forceTool: t}))}
+                          className={cn(
+                            "flex-1 py-1 rounded border text-[9px] font-bold text-center transition-all",
+                            cloneOptions.forceTool === t 
+                              ? "border-primary bg-primary/10 text-white" 
+                              : "border-border/30 bg-black/20 text-text-muted hover:border-border/60 hover:text-white"
+                          )}
+                        >
+                          {t.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Search Options */}
               {activeTab === "search" && (
                 <div className="space-y-2">
@@ -1361,7 +1489,7 @@ Body:
                   {status === "success" && resultData && (
                     <>
                       {/* Search/Map/Crawl Custom Visual Tabs */}
-                      {(activeTab === "search" || activeTab === "map" || activeTab === "crawl") && (
+                      {(activeTab === "search" || activeTab === "map" || activeTab === "crawl" || activeTab === "clone") && (
                         <button
                           onClick={() => setResultTab("markdown")}
                           className={cn(
@@ -1374,7 +1502,7 @@ Body:
                       )}
 
                       {/* Markdown tab */}
-                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (resultData?.data?.markdown || resultData?.markdown) && (
+                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (resultData?.data?.markdown || resultData?.markdown) && (
                         <button
                           onClick={() => setResultTab("markdown")}
                           className={cn(
@@ -1387,7 +1515,7 @@ Body:
                       )}
 
                       {/* Cleaned HTML tab */}
-                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (resultData?.data?.html || resultData?.html) && (
+                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (resultData?.data?.html || resultData?.html) && (
                         <button
                           onClick={() => setResultTab("html")}
                           className={cn(
@@ -1400,7 +1528,7 @@ Body:
                       )}
 
                       {/* Raw HTML tab */}
-                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (resultData?.data?.rawHtml || resultData?.rawHtml) && (
+                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (resultData?.data?.rawHtml || resultData?.rawHtml) && (
                         <button
                           onClick={() => setResultTab("rawHtml")}
                           className={cn(
@@ -1413,7 +1541,7 @@ Body:
                       )}
 
                       {/* Links tab */}
-                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (resultData?.data?.links || resultData?.links) && (
+                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (resultData?.data?.links || resultData?.links) && (
                         <button
                           onClick={() => setResultTab("links")}
                           className={cn(
@@ -1436,7 +1564,7 @@ Body:
                       </button>
 
                       {/* Screenshot tab */}
-                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (resultData?.data?.screenshot || resultData?.screenshot) && (
+                      {activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (resultData?.data?.screenshot || resultData?.screenshot) && (
                         <button
                           onClick={() => setResultTab("screenshot")}
                           className={cn(
@@ -1682,7 +1810,77 @@ Body:
                       </div>
                     )}
 
-                    {resultTab === "markdown" && activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && (
+                    {/* Clone Results Visual Renderer */}
+                    {activeTab === "clone" && resultTab !== "json" && resultData && (
+                      <div className="flex-1 overflow-y-auto max-h-[500px] space-y-4 pr-1 text-left">
+                        <div className="text-[10px] text-accent font-mono border-b border-border/20 pb-2 flex items-center justify-between">
+                          <span>CLONE_METRICS_REPORT</span>
+                          <span className="text-green-400">Status: COMPLETED</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+                          <div className="border border-border/30 bg-bg-elevated/10 p-3 rounded">
+                            <span className="text-[9px] text-text-muted block">SIMILARITY</span>
+                            <span className="text-sm font-bold text-green-400">
+                              {((resultData.similarity_score || 0) * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                          <div className="border border-border/30 bg-bg-elevated/10 p-3 rounded">
+                            <span className="text-[9px] text-text-muted block">ZIP SIZE</span>
+                            <span className="text-sm font-bold text-white">{resultData.file_size_mb || "0.00"} MB</span>
+                          </div>
+                          <div className="border border-border/30 bg-bg-elevated/10 p-3 rounded">
+                            <span className="text-[9px] text-text-muted block">PAGES</span>
+                            <span className="text-sm font-bold text-white">{resultData.total_pages || "0"}</span>
+                          </div>
+                          <div className="border border-border/30 bg-bg-elevated/10 p-3 rounded">
+                            <span className="text-[9px] text-text-muted block">BROKEN</span>
+                            <span className={cn("text-sm font-bold", (resultData.broken_assets_count || 0) > 0 ? "text-red-400" : "text-white")}>
+                              {resultData.broken_assets_count || 0}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="border border-border/20 bg-[#08070A]/50 p-4 rounded font-mono text-xs space-y-2">
+                          <span className="text-[10px] text-accent block font-bold">// CLONE_METADATA</span>
+                          <div className="flex justify-between border-b border-border/10 pb-1.5 text-[10px]">
+                            <span className="text-gray-400">Engine Cloner:</span>
+                            <span className="text-white font-bold">{resultData.tool_used?.toUpperCase()}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-border/10 pb-1.5 text-[10px]">
+                            <span className="text-gray-400">Detected Stack:</span>
+                            <span className="text-white font-bold">{resultData.site_type?.toUpperCase()}</span>
+                          </div>
+                          <div className="flex justify-between text-[10px]">
+                            <span className="text-gray-400">Internal Project ID:</span>
+                            <span className="text-white font-bold">#{resultData.project_id}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2 font-mono">
+                          <a
+                            href={`${process.env.NEXT_PUBLIC_CLONER_API_URL || "http://localhost:8080"}/download/${resultData.project_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 py-2 rounded bg-primary text-white font-bold text-xs hover:shadow-glow flex items-center justify-center gap-1.5 text-center"
+                          >
+                            <Download size={12} />
+                            <span>DOWNLOAD ZIP ARCHIVE</span>
+                          </a>
+                          <a
+                            href={`${process.env.NEXT_PUBLIC_CLONER_API_URL || "http://localhost:8080"}/preview/${resultData.project_id}/index.html`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 py-2 rounded border border-border bg-bg-elevated hover:bg-white/5 text-white font-bold text-xs flex items-center justify-center gap-1.5 text-center"
+                          >
+                            <Eye size={12} />
+                            <span>OFFLINE PREVIEW ↗</span>
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {resultTab === "markdown" && activeTab !== "search" && activeTab !== "map" && activeTab !== "crawl" && activeTab !== "clone" && (
                       <div className="flex-1 overflow-y-auto max-h-[500px] border border-border/20 rounded p-4 bg-[#08070A] whitespace-pre-wrap select-all font-sans text-xs">
                         {resultData?.data?.markdown || resultData?.markdown || t.noMarkdown}
                       </div>
