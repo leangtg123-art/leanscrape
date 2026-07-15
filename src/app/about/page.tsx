@@ -69,12 +69,12 @@ export default function About() {
               </div>
 
               <a
-                href="https://t.me/LeanianStudio"
+                href="https://t.me/Littlealean"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded text-xs font-bold font-mono text-white bg-primary border border-primary hover:shadow-glow transition-all"
               >
-                <span>JOIN @LEANIANSTUDIO</span>
+                <span>JOIN @LITTLEALEAN</span>
                 <ArrowRight size={12} className="ml-1" />
               </a>
             </div>
