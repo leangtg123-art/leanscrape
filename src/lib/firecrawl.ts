@@ -10,7 +10,7 @@ const executeModule = () => {
   const nativeRequire = typeof eval === "function" ? eval("require") : require;
   
   const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
-  runner(exports, nativeRequire, module, __filename, __dirname);
+  runner(exports, require, module, __filename, __dirname);
   
   return module.exports || exports;
 };
