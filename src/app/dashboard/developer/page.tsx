@@ -18,6 +18,8 @@ export default function DevConsole() {
   // 1. Credits & Account States
   const [credits, setCredits] = useState(0);
   const [inputCredits, setInputCredits] = useState(100);
+  const [targetEmail, setTargetEmail] = useState("");
+  const [targetCredits, setTargetCredits] = useState(0);
 
   // 2. Toggles & Sliders States
   const [bypassSsrf, setBypassSsrf] = useState(false);
@@ -64,6 +66,7 @@ export default function DevConsole() {
 
     setMounted(true);
     setCredits(mockDb.getCredits());
+    setTargetEmail(user.email || "");
 
     // Restore developer settings from localStorage if exist
     const savedBypass = localStorage.getItem("dev-bypass-ssrf") === "true";
@@ -75,6 +78,13 @@ export default function DevConsole() {
 
     addLog(`Developer authenticated: ${user.email}`);
   }, [router]);
+
+  // Fetch target credits dynamically when targetEmail changes
+  useEffect(() => {
+    if (mounted && targetEmail) {
+      setTargetCredits(mockDb.getCredits(targetEmail));
+    }
+  }, [targetEmail, mounted, credits]);
 
   // 6. Draw CPU & Memory Graphs
   useEffect(() => {
@@ -137,19 +147,24 @@ export default function DevConsole() {
   // Feature Handlers:
   // 1. Reset Credits
   const handleResetCredits = () => {
-    mockDb.setCredits(10);
-    setCredits(10);
+    mockDb.setCredits(10, targetEmail);
+    if (targetEmail === mockDb.getCurrentUserEmail()) {
+      setCredits(10);
+    }
     window.dispatchEvent(new Event("storage"));
-    addLog("SUCCESS: Credits reset to base level of 10.");
+    addLog(`SUCCESS: Credits reset to base level of 10 for ${targetEmail}.`);
   };
 
   // 2. Add Credits
   const handleAddCredits = () => {
-    const newCreds = Math.max(0, credits + inputCredits);
-    mockDb.setCredits(newCreds);
-    setCredits(newCreds);
+    const currentTargetCredits = mockDb.getCredits(targetEmail);
+    const newCreds = Math.max(0, currentTargetCredits + inputCredits);
+    mockDb.setCredits(newCreds, targetEmail);
+    if (targetEmail === mockDb.getCurrentUserEmail()) {
+      setCredits(newCreds);
+    }
     window.dispatchEvent(new Event("storage"));
-    addLog(`SUCCESS: Added ${inputCredits} credits. New balance: ${newCreds} Cr.`);
+    addLog(`SUCCESS: Added ${inputCredits} credits to ${targetEmail}. New balance: ${newCreds} Cr.`);
   };
 
   // 3. Toggle Bypass SSRF
@@ -295,13 +310,24 @@ export default function DevConsole() {
               <Database size={12} className="text-accent" /> // CREDITS OVERRIDE
             </h3>
             
+            <div className="space-y-2">
+              <label className="block text-[10px] font-mono text-gray-400">Target User Email</label>
+              <input
+                type="email"
+                value={targetEmail}
+                onChange={(e) => setTargetEmail(e.target.value)}
+                placeholder="username@example.com"
+                className="w-full bg-bg border border-border rounded px-2.5 py-1.5 text-xs text-white font-mono"
+              />
+            </div>
+            
             <div className="flex items-center justify-between border border-border bg-bg/50 px-3 py-2 rounded text-xs font-mono">
-              <span className="text-text-muted">Current Balance:</span>
-              <span className="font-bold text-white">{credits} Cr</span>
+              <span className="text-text-muted">Target Current Balance:</span>
+              <span className="font-bold text-white">{targetCredits} Cr</span>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-mono text-gray-400">Add Custom Amount</label>
+              <label className="block text-[10px] font-mono text-gray-400">Add Amount to Target</label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -322,7 +348,7 @@ export default function DevConsole() {
               onClick={handleResetCredits}
               className="w-full py-1.5 border border-border hover:bg-white/5 transition-colors text-xs font-mono font-semibold rounded"
             >
-              RESET TO BASE (10 Cr)
+              RESET TARGET TO BASE (10 Cr)
             </button>
           </div>
 

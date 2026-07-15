@@ -35,44 +35,68 @@ export interface HistoryItem {
 const DEFAULT_CREDITS = 10;
 
 export const mockDb = {
-  getCredits: (): number => {
+  getCurrentUserEmail: (): string => {
+    if (typeof window === "undefined") return "default@leanscrape.dev";
+    const userStr = localStorage.getItem("ls-user");
+    if (!userStr) return "default@leanscrape.dev";
+    try {
+      return JSON.parse(userStr).email || "default@leanscrape.dev";
+    } catch {
+      return "default@leanscrape.dev";
+    }
+  },
+
+  getCredits: (email?: string): number => {
     if (typeof window === "undefined") return DEFAULT_CREDITS;
     
+    const targetEmail = email || mockDb.getCurrentUserEmail();
+    const storageKey = `ls-credits-${targetEmail}`;
+    
     const now = Date.now();
-    const lastResetStr = localStorage.getItem("ls-credits-reset-time");
+    const lastResetStr = localStorage.getItem(`ls-credits-reset-${targetEmail}`);
     const lastReset = lastResetStr ? Number(lastResetStr) : 0;
     const fiveHoursMs = 5 * 60 * 60 * 1000;
     
     if (now - lastReset >= fiveHoursMs || lastResetStr === null) {
-      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
-      localStorage.setItem("ls-credits-reset-time", String(now));
+      localStorage.setItem(storageKey, String(DEFAULT_CREDITS));
+      localStorage.setItem(`ls-credits-reset-${targetEmail}`, String(now));
       return DEFAULT_CREDITS;
     }
     
-    const creds = localStorage.getItem("ls-credits");
+    const creds = localStorage.getItem(storageKey);
     if (creds === null) {
-      localStorage.setItem("ls-credits", String(DEFAULT_CREDITS));
+      localStorage.setItem(storageKey, String(DEFAULT_CREDITS));
       return DEFAULT_CREDITS;
     }
     return Number(creds);
   },
 
-  deductCredits: (amount: number): number => {
-    const current = mockDb.getCredits();
+  deductCredits: (amount: number, email?: string): number => {
+    const targetEmail = email || mockDb.getCurrentUserEmail();
+    const current = mockDb.getCredits(targetEmail);
     const next = Math.max(0, current - amount);
     if (typeof window !== "undefined") {
-      localStorage.setItem("ls-credits", String(next));
+      localStorage.setItem(`ls-credits-${targetEmail}`, String(next));
     }
     return next;
   },
 
-  addCredits: (amount: number): number => {
-    const current = mockDb.getCredits();
+  addCredits: (amount: number, email?: string): number => {
+    const targetEmail = email || mockDb.getCurrentUserEmail();
+    const current = mockDb.getCredits(targetEmail);
     const next = current + amount;
     if (typeof window !== "undefined") {
-      localStorage.setItem("ls-credits", String(next));
+      localStorage.setItem(`ls-credits-${targetEmail}`, String(next));
     }
     return next;
+  },
+
+  setCredits: (amount: number, email?: string): number => {
+    const targetEmail = email || mockDb.getCurrentUserEmail();
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`ls-credits-${targetEmail}`, String(amount));
+    }
+    return amount;
   },
 
   getApiKeys: (): ApiKeyItem[] => {
