@@ -7,28 +7,28 @@ import { cn } from "@/lib/utils";
 const CASES = [
   {
     icon: Search,
-    title: "Deep Research",
-    desc: "Beri makan model penalaran (reasoning models) dengan puluhan halaman web terstruktur sekaligus.",
+    title: "E-Commerce Scrape",
+    desc: "Pantau harga barang, ketersediaan stok, deskripsi produk, dan ulasan secara massal dan otomatis.",
   },
   {
     icon: Compass,
-    title: "Smarter AI Chats",
-    desc: "Sambungkan agen RAG ke hasil mesin pencarian langsung untuk mendapatkan informasi web terbaru.",
+    title: "Market Intelligence",
+    desc: "Analisis tren pasar terkini, pelajari strategi kompetitor, dan kumpulkan direktori industri secara berkala.",
   },
   {
     icon: Bot,
-    title: "AI Agent Tools",
-    desc: "Persenjatai AI Agent Anda dengan alat browsing otonom yang stabil dan tidak terdeteksi bot.",
+    title: "Data Mining APIs",
+    desc: "Integrasikan endpoint API scraping tangguh langsung ke dalam aplikasi Anda tanpa khawatir kena block.",
   },
   {
     icon: FileInput,
-    title: "Onboarding Data",
-    desc: "Dapatkan dokumen, manual, atau artikel bantuan dari web target untuk mengisi basis data internal.",
+    title: "Content Aggregation",
+    desc: "Agregasikan berita terbaru, artikel, postingan blog, hingga dokumen teknis dari berbagai sumber web.",
   },
   {
     icon: Users,
-    title: "Lead Enrichment",
-    desc: "Scrape profil bisnis, media sosial, dan data kontak dari situs web perusahaan secara berkala.",
+    title: "Lead Generation",
+    desc: "Ekstrak info bisnis resmi, kontak publik, alamat email, dan link profil sosial dari halaman perusahaan.",
   },
 ];
 
@@ -84,7 +84,7 @@ export default function UseCases() {
             Designed for versatile workflows
           </h2>
           <p className="text-gray-400 font-sans max-w-xl">
-            Dari asisten chat sederhana hingga agen riset otonom yang bekerja semalam penuh untuk mengumpulkan intelijen pasar.
+            Mulai dari ekstraksi data produk e-commerce, riset pasar otomatis, pemantauan harga, hingga analisis konten kompetitor secara real-time.
           </p>
         </div>
 

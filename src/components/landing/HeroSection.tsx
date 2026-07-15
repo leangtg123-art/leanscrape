@@ -213,16 +213,16 @@ export default function HeroSection() {
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-sans text-white mb-6 leading-[1.1]">
-              Power AI agents with{" "}
+              Convert any website into{" "}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-glow">
-                clean web data
+                structured data
               </span>{" "}
-              at scale
+              instantly
             </h1>
 
             {/* Subheadline */}
             <p className="text-gray-400 text-base md:text-lg mb-8 font-sans max-w-lg leading-relaxed">
-              Beri agen AI-mu akses web yang bersih dan siap pakai. LeanScrape mengubah seluruh situs web menjadi Markdown terstruktur dan JSON siap-LLM secara instan.
+              Ekstrak data dari situs web mana pun secara instan. LeanScrape mengonversi halaman web kompleks menjadi Markdown bersih, HTML tanpa boilerplates, dan JSON terstruktur melalui API yang cepat dan andal.
             </p>
 
             {/* CTA Buttons */}
@@ -240,7 +240,7 @@ export default function HeroSection() {
                 className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded text-sm font-bold font-mono text-gray-300 border border-border bg-bg-elevated/40 hover:bg-white/5 hover:text-white transition-all duration-300"
               >
                 <Terminal size={16} className="mr-2 text-primary" />
-                <span>SETUP FOR AGENTS</span>
+                <span>READ DOCUMENTATION</span>
               </Link>
             </div>
 

@@ -119,7 +119,7 @@ export default function PerformanceSection() {
             Built for extreme performance
           </h2>
           <p className="text-gray-400 font-sans max-w-xl">
-            Dioptimalkan untuk efisiensi token LLM, kecepatan pengambilan data, dan keandalan bypass proteksi scraping.
+            Dioptimalkan untuk kecepatan ekstraksi tinggi, bypass proteksi anti-bot (Cloudflare, CAPTCHA), dan penyajian format data yang bersih.
           </p>
         </div>
 
@@ -242,7 +242,7 @@ export default function PerformanceSection() {
               </div>
 
               <div className="text-center font-bold text-accent pt-1.5 border-t border-border/30">
-                SAVED ~99.1% OF LLM CONTEXT WINDOW
+                REDUCED DOCUMENT SIZE BY ~99.1%
               </div>
             </div>
           </div>

@@ -78,7 +78,7 @@ export default function MainFeatures() {
             Mulai scraping hari ini
           </h2>
           <p className="text-gray-400 font-sans max-w-xl">
-            Tiga pilar utama untuk mengubah data web mentah menjadi bahan bakar berkualitas tinggi untuk model AI Anda.
+            Tiga pilar utama untuk mengambil, mencari, dan memetakan data web dengan bypass anti-bot canggih.
           </p>
         </div>
 
