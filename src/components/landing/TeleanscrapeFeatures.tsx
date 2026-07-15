@@ -82,8 +82,8 @@ export default function TeleanscrapeFeatures() {
           </p>
         </div>
 
-        {/* 5 Core Feature Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+        {/* 3 Core Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {/* Card 1: Web Scrape */}
           <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
             <div className="corner-brackets" />
@@ -117,30 +117,6 @@ export default function TeleanscrapeFeatures() {
             <h3 className="text-base font-bold text-white mb-2">Telegram Scraper</h3>
             <p className="text-xs text-gray-400 leading-relaxed">
               Scrape Telegram groups and download member profiles, bios, usernames, and roles.
-            </p>
-          </div>
-
-          {/* Card 4: WhatsApp Scraper */}
-          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
-            <div className="corner-brackets" />
-            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-              <Phone size={20} />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">WhatsApp Scraper</h3>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Extract group name, description, size, and details directly from WhatsApp invite links.
-            </p>
-          </div>
-
-          {/* Card 5: Group Finder */}
-          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
-            <div className="corner-brackets" />
-            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-              <RotateCw size={20} />
-            </div>
-            <h3 className="text-base font-bold text-white mb-2">Group Finder</h3>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Crawl and find thousands of public WhatsApp & Telegram invite links on the web.
             </p>
           </div>
         </div>
