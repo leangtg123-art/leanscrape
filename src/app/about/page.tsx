@@ -54,29 +54,42 @@ export default function About() {
             </div>
 
             {/* Telegram channel card */}
-            <div className="border border-border/40 bg-bg-elevated/40 p-6 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-6 relative">
+            <div className="border border-border/40 bg-bg-elevated/40 p-6 rounded-lg flex flex-col md:flex-row items-center justify-between gap-6 relative">
               <div className="corner-brackets-top-right" />
               <div className="corner-brackets-bottom-left" />
               
-              <div className="flex items-center gap-4 text-left">
+              <div className="flex items-center gap-4 text-left flex-1">
                 <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
                   <Send size={18} />
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-white font-mono">Join Telegram Channel</h4>
-                  <p className="text-[11px] text-gray-400 mt-0.5">Dapatkan update berkala, diskon rilis studio, dan tips rekayasa prompt.</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    Dapatkan update berkala di <a href="https://t.me/alewrld" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">@alewrld</a> atau hubungi personal chat di <a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-semibold">@Littlealean</a>.
+                  </p>
                 </div>
               </div>
 
-              <a
-                href="https://t.me/Littlealean"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded text-xs font-bold font-mono text-white bg-primary border border-primary hover:shadow-glow transition-all"
-              >
-                <span>JOIN @LITTLEALEAN</span>
-                <ArrowRight size={12} className="ml-1" />
-              </a>
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <a
+                  href="https://t.me/alewrld"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded text-xs font-bold font-mono text-white bg-primary border border-primary hover:shadow-glow transition-all"
+                >
+                  <span>CHANNEL @ALEWRLD</span>
+                  <ArrowRight size={12} className="ml-1" />
+                </a>
+                <a
+                  href="https://t.me/Littlealean"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded text-xs font-bold font-mono text-gray-300 border border-border bg-bg-elevated/40 hover:bg-white/5 transition-all"
+                >
+                  <span>CHAT @LITTLEALEAN</span>
+                  <ArrowRight size={12} className="ml-1" />
+                </a>
+              </div>
             </div>
 
           </div>

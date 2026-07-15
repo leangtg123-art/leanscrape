@@ -61,7 +61,8 @@ export default function Footer() {
             <h4 className="text-xs font-bold text-white uppercase font-mono tracking-widest mb-4">// STUDIO</h4>
             <ul className="flex flex-col gap-2.5 text-xs text-text-muted font-sans">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Telegram Channel</a></li>
+              <li><a href="https://t.me/alewrld" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Telegram Channel</a></li>
+              <li><a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Contact Admin</a></li>
               <li><Link href="/compare" className="hover:text-white transition-colors">Benchmarks</Link></li>
             </ul>
           </div>
@@ -79,10 +80,10 @@ export default function Footer() {
             <a href="https://github.com/leangtg123-art" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" title="GitHub">
               <GitBranch size={16} />
             </a>
-            <a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" title="Telegram">
+            <a href="https://t.me/alewrld" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" title="Telegram Channel">
               <Send size={16} />
             </a>
-            <a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" title="Twitter/X">
+            <a href="https://t.me/Littlealean" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" title="Telegram Admin">
               <MessageCircle size={16} />
             </a>
           </div>
