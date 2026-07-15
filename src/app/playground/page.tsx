@@ -940,8 +940,7 @@ Body:
                   Sitemap discovery. Extract link list hierarchical structure of domains.
                 </span>
               </button>
-            </div>          </div>
-          </div>
+            </div>
 
           {/* Sidebar Riwayat (Tampil di desktop) */}
           <div className="hidden lg:block border-t border-border/40 pt-6 mt-6">
