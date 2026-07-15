@@ -40,7 +40,7 @@ console.log(result.data.markdown);`,
 npx -y leanscrape-cli@latest scrape https://leanian.studio --markdown`,
 };
 
-export default function MainFeatures() {
+export default function TeleanscrapeFeatures() {
   const [activeLang, setActiveLang] = useState<"python" | "node" | "curl" | "cli">("python");
   const [copied, setCopied] = useState(false);
   const [outputTab, setOutputTab] = useState<"markdown" | "json">("markdown");

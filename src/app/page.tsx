@@ -3,7 +3,7 @@ import AnnounceBar from "@/components/landing/AnnounceBar";
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import LogoCloud from "@/components/landing/LogoCloud";
-import MainFeatures from "@/components/landing/MainFeatures";
+import TeleanscrapeFeatures from "@/components/landing/TeleanscrapeFeatures";
 import PerformanceSection from "@/components/landing/PerformanceSection";
 import ZeroConfigSection from "@/components/landing/ZeroConfigSection";
 import UseCases from "@/components/landing/UseCases";
@@ -30,7 +30,7 @@ export default function Home() {
       <LogoCloud />
       
       {/* Feature Cards & Integration Code Switcher */}
-      <MainFeatures />
+      <TeleanscrapeFeatures />
       
       {/* Benchmarks & Metrics (Bar Charts, Countdown, Speed Counters) */}
       <PerformanceSection />
