@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/path";
-import LinkComponent from "next/link";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, KeyRound, BarChart3, History, 
@@ -79,14 +78,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         
         <div className="space-y-8">
           {/* Logo */}
-          <LinkComponent href="/" className="flex items-center gap-2 group font-mono">
+          <Link href="/" className="flex items-center gap-2 group font-mono">
             <div className="w-6 h-6 rounded bg-primary/10 border border-primary/30 flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-primary fill-none stroke-current stroke-2">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
             </div>
             <span className="text-sm font-bold tracking-wider text-white">LEANSCRAPE</span>
-          </LinkComponent>
+          </Link>
 
           {/* User Info & Credits */}
           <div className="border border-border/40 bg-bg/50 p-4 rounded font-mono text-[10px]">
@@ -105,7 +104,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (
-                <LinkComponent
+                <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
@@ -117,7 +116,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 >
                   <Icon size={14} className={isActive ? "text-primary" : "text-text-muted"} />
                   <span>{item.name}</span>
-                </LinkComponent>
+                </Link>
               );
             })}
           </nav>
@@ -125,13 +124,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Bottom Actions */}
         <div className="space-y-4 font-mono text-xs border-t border-border/40 pt-4">
-          <LinkComponent 
+          <Link 
             href="/playground" 
             className="flex items-center gap-3 px-3 py-2 border border-border bg-bg-elevated hover:bg-white/5 text-white rounded transition-colors text-center justify-center font-bold"
           >
             <Terminal size={12} className="text-primary" />
             <span>PLAYGROUND</span>
-          </LinkComponent>
+          </Link>
 
           <button
             onClick={handleSignOut}
@@ -145,9 +144,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* 2. Top Navigation - Mobile */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 border-b border-border bg-[#0B0A0E] z-30">
-        <LinkComponent href="/" className="flex items-center gap-2 font-mono">
+        <Link href="/" className="flex items-center gap-2 font-mono">
           <span className="text-xs font-bold tracking-wider text-white">LEANSCRAPE</span>
-        </LinkComponent>
+        </Link>
         
         <div className="flex items-center gap-3">
           <ThemeSwitcher />
@@ -172,7 +171,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <div className="flex flex-col gap-1">
             {navItems.map((item) => (
-              <LinkComponent
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
@@ -182,19 +181,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 )}
               >
                 {item.name}
-              </LinkComponent>
+              </Link>
             ))}
           </div>
 
           <hr className="border-border/40" />
 
-          <LinkComponent 
+          <Link 
             href="/playground" 
             className="text-center py-2 bg-primary text-white rounded font-bold"
             onClick={() => setMobileMenuOpen(false)}
           >
             PLAYGROUND
-          </LinkComponent>
+          </Link>
 
           <button
             onClick={handleSignOut}

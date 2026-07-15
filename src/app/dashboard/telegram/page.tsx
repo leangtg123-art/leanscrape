@@ -241,10 +241,8 @@ function TelegramScraperContent() {
     setLogs([]);
   };
 
-  // Scraping Handling
-  const handleScrape = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!groupIdentifier.trim()) return;
+  const performScrape = async (target: string) => {
+    if (!target.trim()) return;
 
     setScrapeLoading(true);
     setScrapeError("");
@@ -256,7 +254,7 @@ function TelegramScraperContent() {
 
     addLog("[INFO] Starting stealth Telegram MTProto Scraper engine...");
     addLog(`[INFO] Parameters configured -> Limit: ${limit}, Type: ${memberType}`);
-    addLog(`[INFO] Targeting identifier: "${groupIdentifier}"`);
+    addLog(`[INFO] Targeting identifier: "${target}"`);
     addLog("[INFO] Connecting client session to Telegram Gateways...");
 
     try {
@@ -267,7 +265,7 @@ function TelegramScraperContent() {
           apiId,
           apiHash,
           session: sessionKey,
-          groupIdentifier,
+          groupIdentifier: target,
           memberType,
           limit,
         }),
@@ -294,9 +292,17 @@ function TelegramScraperContent() {
     }
   };
 
-  const selectGroupFromDialog = (username: string, id: string) => {
-    setGroupIdentifier(username || id);
-    addLog(`[INFO] Selected group from sidebar: ${username || id}`);
+  // Scraping Handling
+  const handleScrape = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await performScrape(groupIdentifier);
+  };
+
+  const selectGroupFromDialog = async (username: string, id: string) => {
+    const target = username ? `@${username}` : id;
+    setGroupIdentifier(target);
+    addLog(`[INFO] Selected group from sidebar: ${target}`);
+    await performScrape(target);
   };
 
   // Fetch Detail User Bio & Photo One-by-One
