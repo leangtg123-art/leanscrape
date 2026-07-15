@@ -37,10 +37,11 @@ export async function GET(req: NextRequest) {
           })
         : "-";
 
-      const categories = post.category ? post.category.map((c: any) => c.term) : [];
+      const categoriesList = post.category ? post.category.map((c: any) => c.term) : [];
+      const categoriesJoined = categoriesList.join(', ') || '-';
       const htmlContent = post.content?.$t || "";
 
-      let groupLink = "";
+      let groupLink = "Link tidak ditemukan";
       const waLinkMatch = htmlContent.match(/https?:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9_-]+/i);
       const tgLinkMatch = htmlContent.match(/https?:\/\/t\.me\/[a-zA-Z0-9_-]+/i);
 
@@ -63,18 +64,27 @@ export async function GET(req: NextRequest) {
         .replace(/&nbsp;/g, ' ')
         .trim();
 
-      if (description.length > 200) {
-        description = description.substring(0, 200) + "...";
+      if (description.length > 250) {
+        description = description.substring(0, 250) + "... [BACA SELENGKAPNYA DI URL]";
       }
 
       return {
+        // English keys (compatibility with dashboard UI)
         title,
         publishedDate,
-        categories,
+        categories: categoriesList,
         postUrl,
-        groupLink,
+        groupLink: groupLink === "Link tidak ditemukan" ? "" : groupLink,
         platform,
-        description
+        description,
+
+        // Indonesian keys (matches searchGropKu snippet)
+        judul: title,
+        tanggal: publishedDate,
+        kategori: categoriesJoined,
+        url_artikel: postUrl,
+        link_grup: groupLink,
+        deskripsi: description
       };
     });
 
