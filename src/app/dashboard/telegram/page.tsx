@@ -120,8 +120,15 @@ function TelegramScraperContent() {
   }, [logs]);
 
   const addLog = (message: string) => {
-    const time = new Date().toLocaleTimeString();
-    setLogs((prev) => [...prev, `[${time}] ${message}`]);
+    try {
+      const time = new Date().toLocaleTimeString();
+      setLogs((prev) => {
+        const current = Array.isArray(prev) ? prev : [];
+        return [...current, `[${time}] ${message}`];
+      });
+    } catch (e) {
+      console.error("addLog error:", e);
+    }
   };
 
   const loadDialogs = async () => {
@@ -299,10 +306,16 @@ function TelegramScraperContent() {
   };
 
   const selectGroupFromDialog = async (username: string, id: string) => {
-    const target = username ? `@${username}` : id;
-    setGroupIdentifier(target);
-    addLog(`[INFO] Selected group from sidebar: ${target}`);
-    await performScrape(target);
+    try {
+      const target = username ? `@${username}` : id;
+      if (!target) return;
+      setGroupIdentifier(target);
+      addLog(`[INFO] Selected group from sidebar: ${target}`);
+      await performScrape(target);
+    } catch (err: any) {
+      console.error("Error inside selectGroupFromDialog:", err);
+      addLog(`[ERROR] Selection failed: ${err?.message || String(err)}`);
+    }
   };
 
   // Fetch Detail User Bio & Photo One-by-One
@@ -488,12 +501,12 @@ function TelegramScraperContent() {
   };
 
   // Calculate live statistics
-  const totalScraped = members.length;
-  const adminCount = members.filter(m => m.role === "admin").length;
-  const botCount = members.filter(m => m.isBot).length;
-  const premiumCount = members.filter(m => m.isPremium).length;
-  const usernameCount = members.filter(m => m.username).length;
-  const bioCount = members.filter(m => m.bio).length;
+  const totalScraped = members ? members.length : 0;
+  const adminCount = members ? members.filter(m => m && m.role === "admin").length : 0;
+  const botCount = members ? members.filter(m => m && m.isBot).length : 0;
+  const premiumCount = members ? members.filter(m => m && m.isPremium).length : 0;
+  const usernameCount = members ? members.filter(m => m && m.username).length : 0;
+  const bioCount = members ? members.filter(m => m && m.bio).length : 0;
 
   const botPercentage = totalScraped > 0 ? ((botCount / totalScraped) * 100).toFixed(1) : "0";
   const premiumPercentage = totalScraped > 0 ? ((premiumCount / totalScraped) * 100).toFixed(1) : "0";
@@ -502,12 +515,14 @@ function TelegramScraperContent() {
   const adminRatio = totalScraped > 0 ? ((adminCount / totalScraped) * 100).toFixed(1) : "0";
 
   // Filtered members list
-  const filteredMembers = members.filter((member) => {
+  const filteredMembers = members ? members.filter((member) => {
+    if (!member) return false;
+
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      const nicknameMatch = member.nickname.toLowerCase().includes(q);
-      const usernameMatch = member.username?.toLowerCase().includes(q);
-      const idMatch = member.id.includes(q);
+      const nicknameMatch = member.nickname ? member.nickname.toLowerCase().includes(q) : false;
+      const usernameMatch = member.username ? member.username.toLowerCase().includes(q) : false;
+      const idMatch = member.id ? member.id.includes(q) : false;
       if (!nicknameMatch && !usernameMatch && !idMatch) return false;
     }
 
@@ -523,7 +538,7 @@ function TelegramScraperContent() {
     if (filterHasBio && !member.bio) return false;
 
     return true;
-  });
+  }) : [];
 
   if (!isAuthenticated) {
     return (
