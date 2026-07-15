@@ -22,19 +22,29 @@ export async function POST(req: NextRequest) {
     try {
       entity = await client.getEntity(normalizedId);
     } catch (err: any) {
-      // If error is about username/invite hash, try to import invite link if possible
-      if (normalizedId.startsWith("+") || normalizedId.startsWith("joinchat/")) {
-        const hash = normalizedId.replace("+", "").replace("joinchat/", "");
-        try {
-          const res = await client.invoke(
-            new Api.messages.ImportChatInvite({ hash })
-          );
-          entity = (res as any).chats?.[0];
-        } catch (inviteErr: any) {
-          throw new Error("Gagal memproses link invite: " + (inviteErr.message || String(inviteErr)));
+      // Try resolving as numeric ID directly (GramJS requires integer/BigInt for raw IDs)
+      try {
+        const numericId = parseInt(normalizedId);
+        if (!isNaN(numericId)) {
+          entity = await client.getEntity(numericId);
+        } else {
+          throw err;
         }
-      } else {
-        throw new Error("Grup tidak ditemukan: " + (err.message || String(err)));
+      } catch (err2) {
+        // If error is about username/invite hash, try to import invite link if possible
+        if (normalizedId.startsWith("+") || normalizedId.startsWith("joinchat/")) {
+          const hash = normalizedId.replace("+", "").replace("joinchat/", "");
+          try {
+            const res = await client.invoke(
+              new Api.messages.ImportChatInvite({ hash })
+            );
+            entity = (res as any).chats?.[0];
+          } catch (inviteErr: any) {
+            throw new Error("Gagal memproses link invite: " + (inviteErr.message || String(inviteErr)));
+          }
+        } else {
+          throw new Error("Grup tidak ditemukan: " + (err.message || String(err)));
+        }
       }
     }
 

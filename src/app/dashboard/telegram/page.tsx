@@ -1216,7 +1216,7 @@ function TelegramScraperContent() {
                       ) : (
                         <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-mono text-xl shadow-inner relative">
                           <div className="absolute -inset-0.5 bg-primary rounded-full blur opacity-10" />
-                          <span>{selectedUser.nickname.charAt(0)}</span>
+                          <span>{selectedUser.nickname ? selectedUser.nickname.charAt(0) : "U"}</span>
                         </div>
                       )}
 
@@ -1294,6 +1294,73 @@ function TelegramScraperContent() {
   );
 }
 
+class ScraperErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null; errorInfo: any }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    this.setState({ errorInfo });
+    console.error("ScraperErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 border border-red-500/40 bg-red-500/10 rounded-lg max-w-4xl mx-auto my-12 font-mono space-y-4">
+          <div className="flex items-center gap-2 text-red-400 border-b border-red-500/20 pb-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+            <span className="font-bold text-xs font-mono">// CRITICAL_CLIENT_SIDE_EXCEPTION_DETECTED</span>
+          </div>
+          <p className="text-[10px] text-white leading-relaxed">
+            Sistem mendeteksi adanya kegagalan eksekusi JavaScript pada browser Anda. Detail kesalahan:
+          </p>
+          <div className="p-4 bg-black/80 rounded border border-red-500/20 text-[9px] text-red-400 overflow-x-auto space-y-2">
+            <div>
+              <span className="text-text-muted">ERROR_NAME:</span> {this.state.error?.name || "Error"}
+            </div>
+            <div>
+              <span className="text-text-muted">ERROR_MESSAGE:</span> {this.state.error?.message || "No message available"}
+            </div>
+            {this.state.error?.stack && (
+              <div>
+                <span className="text-text-muted block mb-1">STACK_TRACE:</span>
+                <pre className="whitespace-pre text-[8px] leading-relaxed text-red-300 max-h-[250px] overflow-y-auto">
+                  {this.state.error.stack}
+                </pre>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-500 text-white text-xs font-bold font-mono rounded hover:bg-red-600 transition-all"
+            >
+              MUAT ULANG HALAMAN (RELOAD)
+            </button>
+            <button
+              onClick={() => this.setState({ hasError: false, error: null, errorInfo: null })}
+              className="px-4 py-2 bg-white/10 text-white text-xs font-bold font-mono rounded hover:bg-white/20 transition-all border border-border"
+            >
+              COBA ABARKAN & LANJUTKAN
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default function TelegramScraperPage() {
   return (
     <Suspense fallback={
@@ -1301,7 +1368,9 @@ export default function TelegramScraperPage() {
         Loading Telegram Scraper Panel...
       </div>
     }>
-      <TelegramScraperContent />
+      <ScraperErrorBoundary>
+        <TelegramScraperContent />
+      </ScraperErrorBoundary>
     </Suspense>
   );
 }
