@@ -47,17 +47,9 @@ export async function POST(req: NextRequest) {
     let groupTitle = entity.title || "Grup Telegram";
     let groupDescription = "";
 
-    try {
-      const fullChat = await client.invoke(
-        new Api.messages.GetFullChat({
-          chatId: entity.id,
-        })
-      );
-      const fullInfo = (fullChat as any).fullChat;
-      totalMembersCount = fullInfo.participantsCount || fullInfo.participants?.participants?.length || 0;
-      groupDescription = fullInfo.about || "";
-    } catch (e) {
-      // Channels / Supergroups require GetFullChannel
+    const isChannel = entity.className === "Channel" || entity.className === "ChannelForbidden";
+
+    if (isChannel) {
       try {
         const fullChannel = await client.invoke(
           new Api.channels.GetFullChannel({
@@ -68,6 +60,19 @@ export async function POST(req: NextRequest) {
         totalMembersCount = fullInfo.participantsCount || 0;
         groupDescription = fullInfo.about || "";
       } catch (channelErr) {
+        totalMembersCount = entity.participantsCount || 0;
+      }
+    } else {
+      try {
+        const fullChat = await client.invoke(
+          new Api.messages.GetFullChat({
+            chatId: entity.id,
+          })
+        );
+        const fullInfo = (fullChat as any).fullChat;
+        totalMembersCount = fullInfo.participantsCount || fullInfo.participants?.participants?.length || 0;
+        groupDescription = fullInfo.about || "";
+      } catch (chatErr) {
         totalMembersCount = entity.participantsCount || 0;
       }
     }
