@@ -15,32 +15,32 @@ const FAQS: FaqItem[] = [
   {
     id: "faq-1",
     category: "general",
-    question: "Apa itu LeanScrape?",
-    answer: "LeanScrape adalah antarmuka visual (Playground & Dashboard) premium yang dibangun oleh LeanianStudio di atas Firecrawl API. Membantu developer mengekstrak konten web menjadi data terstruktur (Markdown/JSON) yang ramah LLM.",
+    question: "What is LeanScrape?",
+    answer: "LeanScrape is a premium visual interface (Playground & Dashboard) built by LeanianStudio on top of the Firecrawl API. It helps developers extract web content into structured data (Markdown/JSON) optimized for application usage.",
   },
   {
     id: "faq-2",
     category: "general",
-    question: "Apakah LeanScrape terafiliasi dengan Firecrawl?",
-    answer: "Tidak. LeanScrape adalah wrapper/client independen yang dikembangkan oleh LeanianStudio. Kami menggunakan Firecrawl API resmi sebagai mesin pencari & scraping dasar untuk menyajikan data secara aman.",
+    question: "Is LeanScrape officially affiliated with Firecrawl?",
+    answer: "No. LeanScrape is an independent client interface wrapper developed by LeanianStudio. We utilize the official Firecrawl API as the underlying search & extraction engine to deliver data securely.",
   },
   {
     id: "faq-3",
     category: "api",
-    question: "Apakah saya harus menggunakan API Key sendiri?",
-    answer: "Ya. Untuk alasan keamanan, efisiensi biaya, dan kendali penuh, setiap pengguna wajib memasukkan API Key Firecrawl milik mereka sendiri di antarmuka Playground. Kunci ini disimpan secara lokal di browser Anda dan tidak pernah terekspos ke server eksternal.",
+    question: "Do I need to use my own Firecrawl API Key?",
+    answer: "Yes. For security, cost-efficiency, and absolute control, users are required to input their own Firecrawl API Key in the Playground. Your key is stored securely in your browser's local storage and is never exposed to external servers.",
   },
   {
     id: "faq-4",
     category: "api",
-    question: "Format ekstraksi data apa saja yang didukung?",
-    answer: "Kami mendukung format Markdown (LLM-ready), HTML bersih, Raw HTML asli (unmodified DOM source), daftar tautan eksternal (links), serta tangkapan layar viewport atau scroll penuh (screenshot@fullPage).",
+    question: "Which data extraction formats are supported?",
+    answer: "We support Markdown (LLM-ready format), cleaned HTML, unmodified Raw HTML source, external link lists, and full-page or viewport screenshots.",
   },
   {
     id: "faq-5",
     category: "api",
-    question: "Bagaimana sistem proteksi SSRF bekerja?",
-    answer: "LeanScrape dilengkapi dengan filter keamanan SSRF tingkat lanjut di sisi server. Sistem ini memblokir semua upaya scraping ke IP privat, localhost, intranet, dan domain lokal (.local/.internal) untuk mencegah kebocoran data internal.",
+    question: "How does the Server-Side Request Forgery (SSRF) protection work?",
+    answer: "LeanScrape features an advanced server-side SSRF protection filter. It blocks all scraping attempts targeting private IPs, localhost, intranet networks, and local domains (.local/.internal) to prevent internal data exposure.",
   },
 ];
 
@@ -62,7 +62,7 @@ export default function FaqSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-gray-400 font-sans text-sm max-w-lg mx-auto">
-            Semua jawaban atas pertanyaan umum terkait fungsionalitas, integrasi, dan keamanan data di LeanScrape.
+            Find answers to common questions about LeanScrape's functionality, integration patterns, and data security standards.
           </p>
         </div>
 

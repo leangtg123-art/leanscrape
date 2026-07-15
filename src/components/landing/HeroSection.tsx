@@ -222,7 +222,7 @@ export default function HeroSection() {
 
             {/* Subheadline */}
             <p className="text-gray-400 text-base md:text-lg mb-8 font-sans max-w-lg leading-relaxed">
-              Ekstrak data dari situs web mana pun secara instan. LeanScrape mengonversi halaman web kompleks menjadi Markdown bersih, HTML tanpa boilerplates, dan JSON terstruktur melalui API yang cepat dan andal.
+              Extract data from any website instantly. LeanScrape converts complex web pages into clean Markdown, boilerplate-free HTML, and structured JSON via a fast and reliable API.
             </p>
 
             {/* CTA Buttons */}

@@ -75,10 +75,10 @@ export default function MainFeatures() {
             01 / 06 · MAIN FEATURES
           </div>
           <h2 className="text-3xl md:text-5xl font-bold font-sans text-white mb-4">
-            Mulai scraping hari ini
+            Start scraping today
           </h2>
           <p className="text-gray-400 font-sans max-w-xl">
-            Tiga pilar utama untuk mengambil, mencari, dan memetakan data web dengan bypass anti-bot canggih.
+            Three core engines to extract, search, and map web data with advanced anti-bot bypass.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function MainFeatures() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Search</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Cari apa saja di web secara real-time dan dapatkan konten lengkap yang diformat khusus untuk dimasukkan ke konteks LLM.
+              Search anything on the web in real-time and retrieve complete content formatted specifically for developer and LLM integrations.
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export default function MainFeatures() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Scrape</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Konversi satu atau ratusan URL sekaligus menjadi Markdown bersih, HTML ter-strip, JSON terstruktur, bahkan tangkapan layar (screenshot).
+              Convert single or hundreds of URLs simultaneously into clean Markdown, stripped HTML, structured JSON, or full-page screenshots.
             </p>
           </div>
 
@@ -116,7 +116,7 @@ export default function MainFeatures() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Crawl</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Crawl seluruh situs web secara mendalam dan terstruktur. Otomatis menelusuri sub-halaman, mengekstrak tautan, dan memformat semuanya.
+              Crawl entire websites recursively and structurally. Automatically discover sub-pages, extract active links, and format all data dynamically.
             </p>
           </div>
         </div>

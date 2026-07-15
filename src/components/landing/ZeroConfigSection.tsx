@@ -56,7 +56,7 @@ export default function ZeroConfigSection() {
             Powerful developer utilities
           </h2>
           <p className="text-gray-400 font-sans max-w-xl">
-            Tidak perlu melakukan konfigurasi browser yang rumit. Kami menyediakan semua perkakas yang Anda butuhkan secara out-of-the-box.
+            No complex browser setup required. We provide all the scraping utilities you need out-of-the-box.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function ZeroConfigSection() {
                 <h3 className="text-lg font-bold text-white font-sans">Docs to data</h3>
               </div>
               <p className="text-sm text-gray-400 mb-6">
-                Parse dokumen dinamis seperti PDF, DOCX, XLSX, XML, maupun HTML kompleks secara otomatis.
+                Automatically parse dynamic documents including PDF, DOCX, XLSX, XML, and complex HTML.
               </p>
             </div>
             
@@ -100,7 +100,7 @@ export default function ZeroConfigSection() {
                 <h3 className="text-lg font-bold text-white font-sans">Smart wait</h3>
               </div>
               <p className="text-sm text-gray-400 mb-6">
-                Menunggu pemuatan skrip klien (SPA framework, React hydration, data async fetch) secara otomatis sebelum menyalin konten.
+                Automatically wait for client-side scripts, SPA hydration, and async data fetches before extracting content.
               </p>
             </div>
 
@@ -126,7 +126,7 @@ export default function ZeroConfigSection() {
                 <h3 className="text-lg font-bold text-white font-sans">Live web data (index & cache)</h3>
               </div>
               <p className="text-sm text-gray-400 mb-6">
-                Sistem caching internal yang efisien untuk mempercepat pengambilan data web yang sama tanpa melakukan scrape ulang.
+                Efficient internal caching system to accelerate repeat requests without scraping the target website again.
               </p>
             </div>
 
@@ -177,7 +177,7 @@ export default function ZeroConfigSection() {
                 <h3 className="text-lg font-bold text-white font-sans">Interact with pages (Actions)</h3>
               </div>
               <p className="text-sm text-gray-400 mb-6">
-                Lakukan interaksi browser secara teratur. Klik tombol, isi form, navigasi, geser, tekan tombol keyboard, lalu ambil output.
+                Perform browser interactions on target pages. Click buttons, fill forms, navigate, scroll, press keys, and retrieve the output.
               </p>
             </div>
 
