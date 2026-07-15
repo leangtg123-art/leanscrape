@@ -59,7 +59,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Clone", href: "/dashboard/cloner", icon: Database },
     { name: "API Keys", href: "/dashboard/api-keys", icon: KeyRound },
     { name: "Usage Credits", href: "/dashboard/usage", icon: BarChart3 },
     { name: "Request History", href: "/dashboard/history", icon: History },
