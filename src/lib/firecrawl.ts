@@ -18,20 +18,12 @@ export async function scrapeUrl(url: string, formats: any[] = ["markdown"], acti
     cleanFormats = cleanFormats.filter((f) => f !== "screenshot");
   }
 
-  // Map screenshot@fullPage into object format expected by Firecrawl v1
-  const mappedFormats = cleanFormats.map((f) => {
-    if (f === "screenshot@fullPage") {
-      return { type: "screenshot", fullPage: true };
-    }
-    return f;
-  });
-
   const res = await fetch(`${BASE_URL}/v1/scrape`, {
     method: "POST",
     headers: getHeaders(customApiKey),
     body: JSON.stringify({
       url,
-      formats: mappedFormats,
+      formats: cleanFormats,
       ...(actions && actions.length > 0 ? { actions } : {}),
     }),
   });
