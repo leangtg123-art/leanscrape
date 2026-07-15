@@ -2,21 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { 
-  Play, Terminal, RotateCw, Copy, Check, Download, 
-  Eye, RefreshCw, Layers, ShieldAlert, Cpu, CheckCircle2 
+  Play, RotateCw, Download, Eye, Layers, ShieldAlert, Cpu, CheckCircle2 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface CloneJob {
-  id: number;
-  url: string;
-  project_name: string;
-  site_type: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  created_at: string;
-}
+// API Endpoint configuration for Vercel deploys
+const API_BASE_URL = process.env.NEXT_PUBLIC_CLONER_API_URL || "http://localhost:8080";
 
-export default function NexusClonerPage() {
+export default function ClonePage() {
   const [url, setUrl] = useState("https://example.com");
   const [depth, setDepth] = useState(2);
   const [forceTool, setForceTool] = useState("auto");
@@ -27,7 +20,6 @@ export default function NexusClonerPage() {
   const [currentStage, setCurrentStage] = useState("");
   const [result, setResult] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [copied, setCopied] = useState(false);
 
   // Polling status
   useEffect(() => {
@@ -35,7 +27,7 @@ export default function NexusClonerPage() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`http://localhost:8080/status/${activeJobId}`);
+        const res = await fetch(`${API_BASE_URL}/status/${activeJobId}`);
         if (res.ok) {
           const data = await res.json();
           setProgressPercent(data.progress_percent);
@@ -44,7 +36,7 @@ export default function NexusClonerPage() {
           if (data.status === "completed") {
             clearInterval(interval);
             // Fetch result details
-            const resultRes = await fetch(`http://localhost:8080/result/${activeJobId}`);
+            const resultRes = await fetch(`${API_BASE_URL}/result/${activeJobId}`);
             if (resultRes.ok) {
               const resultData = await resultRes.json();
               setResult(resultData);
@@ -74,7 +66,7 @@ export default function NexusClonerPage() {
     setResult(null);
 
     try {
-      const res = await fetch("http://localhost:8080/clone", {
+      const res = await fetch(`${API_BASE_URL}/clone`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -95,20 +87,20 @@ export default function NexusClonerPage() {
       setActiveJobId(data.project_id);
     } catch (e: any) {
       setStatus("error");
-      setErrorMsg(e.message || "Gagal terhubung ke Nexus Clone API Server. Pastikan server backend berjalan di port 8080.");
+      setErrorMsg(e.message || `Gagal terhubung ke Clone API Server di ${API_BASE_URL}. Pastikan server backend berjalan.`);
     }
   };
 
   const handleDownload = () => {
     if (!activeJobId) return;
-    window.open(`http://localhost:8080/download/${activeJobId}`);
+    window.open(`${API_BASE_URL}/download/${activeJobId}`);
   };
 
   return (
     <div className="space-y-6 font-mono">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold tracking-wider text-white">// NEXUS_CLONE_ENGINE (NCE)</h1>
+        <h1 className="text-xl font-bold tracking-wider text-white">// CLONE_ENGINE</h1>
         <p className="text-xs text-text-muted mt-1">One Click. Full Website Clone. Zero Workstation Requirements.</p>
       </div>
 
@@ -287,7 +279,7 @@ export default function NexusClonerPage() {
                     <span>DOWNLOAD ZIP ARCHIVE</span>
                   </button>
                   <a
-                    href={`http://localhost:8080/preview/${activeJobId}/index.html`}
+                    href={`${API_BASE_URL}/preview/${activeJobId}/index.html`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 py-2.5 rounded border border-border bg-bg-elevated hover:bg-white/5 text-white font-bold text-xs flex items-center justify-center gap-1.5 text-center"
