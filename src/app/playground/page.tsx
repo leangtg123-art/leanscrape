@@ -386,79 +386,85 @@ export default function Playground() {
           include_assets: true
         }
       };
-    }
-
     const startTime = Date.now();
 
     try {
-      addDevLog(`[SECURITY] Executing smart SSRF check on target host...`);
-      const response = await fetch(endpointUrl, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "x-firecrawl-api-key": activeApiKey,
-        },
-        body: JSON.stringify(bodyPayload),
-      });
+      let response;
+      const clonerUrl = process.env.NEXT_PUBLIC_CLONER_API_URL || "http://localhost:8080";
+
+      if (activeTab === "clone") {
+        addDevLog(`[CLIENT] Executing direct connection to cloner backend at ${clonerUrl}...`);
+        response = await fetch(`${clonerUrl}/clone`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(bodyPayload),
+        });
+      } else {
+        addDevLog(`[SECURITY] Executing smart SSRF check on target host...`);
+        response = await fetch(endpointUrl, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "x-firecrawl-api-key": activeApiKey,
+          },
+          body: JSON.stringify(bodyPayload),
+        });
+      }
 
       const json = await response.json();
       const endTime = Date.now();
       const duration = endTime - startTime;
       setLatencyMs(duration);
 
-      if (!response.ok || !json.success) {
-        throw new Error(json.error || `HTTP error! status: ${response.status}`);
-      }
-
       if (activeTab === "clone") {
-        const jobId = json.data.project_id;
+        if (!response.ok) {
+          throw new Error(json.error || `HTTP error! status: ${response.status}`);
+        }
+        const jobId = json.project_id;
         addDevLog(`[CLONE] Job #${jobId} queued. Starting status polling...`);
         setProgressPercent(10);
         
         const pollInterval = setInterval(async () => {
           try {
-            const pollRes = await fetch(`/api/leanscrape/clone-status?jobId=${jobId}`);
+            const pollRes = await fetch(`${clonerUrl}/status/${jobId}`);
             if (pollRes.ok) {
-              const pollJson = await pollRes.json();
-              if (pollJson.success) {
-                const statusData = pollJson.data;
-                setProgressPercent(statusData.progress_percent || 10);
-                addDevLog(`[CLONE] Stage: ${statusData.current_stage || "running"} (${statusData.progress_percent}%)`);
-                
-                if (statusData.status === "completed") {
-                  clearInterval(pollInterval);
-                  const resultRes = await fetch(`/api/leanscrape/clone-result?jobId=${jobId}`);
-                  if (resultRes.ok) {
-                    const resultJson = await resultRes.json();
-                    if (resultJson.success) {
-                      setResultData(resultJson.data);
-                      setStatus("success");
-                      addDevLog(`[SUCCESS] Cloned website successfully.`);
-                      
-                      // Deduct credits
-                      const nextCredits = mockDb.deductCredits(json.creditsDeducted);
-                      setCredits(nextCredits);
-                      if (nextCredits <= 0) {
-                        setShowLimitModal(true);
-                      }
-                      
-                      // Log history
-                      mockDb.addHistory(
-                        "CLONE",
-                        targetUrl,
-                        "200 OK",
-                        json.creditsDeducted,
-                        JSON.stringify(resultJson.data)
-                      );
-                      setHistory(mockDb.getHistory());
-                    }
+              const statusData = await pollRes.json();
+              setProgressPercent(statusData.progress_percent || 10);
+              addDevLog(`[CLONE] Stage: ${statusData.current_stage || "running"} (${statusData.progress_percent}%)`);
+              
+              if (statusData.status === "completed") {
+                clearInterval(pollInterval);
+                const resultRes = await fetch(`${clonerUrl}/result/${jobId}`);
+                if (resultRes.ok) {
+                  const resultData = await resultRes.json();
+                  setResultData(resultData);
+                  setStatus("success");
+                  addDevLog(`[SUCCESS] Cloned website successfully.`);
+                  
+                  // Deduct credits
+                  const nextCredits = mockDb.deductCredits(15);
+                  setCredits(nextCredits);
+                  if (nextCredits <= 0) {
+                    setShowLimitModal(true);
                   }
-                } else if (statusData.status === "failed") {
-                  clearInterval(pollInterval);
-                  setStatus("error");
-                  setErrorMsg("Kloning gagal karena error internal di decant engine.");
-                  addDevLog(`[ERROR] Cloner failed.`);
+                  
+                  // Log history
+                  mockDb.addHistory(
+                    "CLONE",
+                    targetUrl,
+                    "200 OK",
+                    15,
+                    JSON.stringify(resultData)
+                  );
+                  setHistory(mockDb.getHistory());
                 }
+              } else if (statusData.status === "failed") {
+                clearInterval(pollInterval);
+                setStatus("error");
+                setErrorMsg("Kloning gagal karena error internal di decant engine.");
+                addDevLog(`[ERROR] Cloner failed.`);
               }
             }
           } catch (pollErr: any) {
@@ -469,6 +475,10 @@ export default function Playground() {
         setResultTab("markdown");
         setMobileView("result");
         return;
+      }
+
+      if (!response.ok || !json.success) {
+        throw new Error(json.error || `HTTP error! status: ${response.status}`);
       }
 
       // Hitung ukuran payload
