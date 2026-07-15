@@ -6,7 +6,7 @@ import {
   Send, Users, Shield, User, FileJson, 
   Download, Eye, Settings, ShieldCheck, 
   HelpCircle, LogOut, CheckCircle2, AlertTriangle, Play,
-  Search, Info, Award, MessageSquare, ShieldAlert, Sparkles, Trash2, CheckSquare
+  Search, Info, Award, MessageSquare, ShieldAlert, Sparkles, Trash2, CheckSquare, Terminal
 } from "lucide-react";
 
 interface TelegramUser {
