@@ -1,3 +1,17 @@
+/* Critical CSS Variables - harus di atas segalanya agar selalu aktif */
+:root {
+  --lc-primary: #C81E3A;
+  --lc-primary-rgb: 200, 30, 58;
+  --lc-accent: #D4AF37;
+  --lc-accent-rgb: 212, 175, 55;
+  --lc-bg: #0A0A0C;
+  --lc-bg-elevated: #141417;
+  --lc-text: #F5F1E8;
+  --lc-text-muted: #9A9A9F;
+  --lc-border: rgba(212, 175, 55, 0.18);
+  --lc-glow: 0 0 40px rgba(200, 30, 58, 0.35);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -68,19 +82,7 @@
   --lc-glow: 0 0 40px rgba(225, 29, 46, 0.35);
 }
 
-/* Fallback default theme (Crimson Core) jika belum ada di localStorage */
-:root {
-  --lc-primary: #C81E3A;
-  --lc-primary-rgb: 200, 30, 58;
-  --lc-accent: #D4AF37;
-  --lc-accent-rgb: 212, 175, 55;
-  --lc-bg: #0A0A0C;
-  --lc-bg-elevated: #141417;
-  --lc-text: #F5F1E8;
-  --lc-text-muted: #9A9A9F;
-  --lc-border: rgba(212, 175, 55, 0.18);
-  --lc-glow: 0 0 40px rgba(200, 30, 58, 0.35);
-}
+/* Fallback sudah dipindahkan ke atas agar prioritas lebih tinggi */
 
 * {
   box-sizing: border-box;
