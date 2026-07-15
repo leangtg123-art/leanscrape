@@ -118,6 +118,21 @@ const TRANSLATIONS = {
   }
 };
 
+function injectBaseHref(html: string, baseUrl: string) {
+  if (!html || !baseUrl) return html;
+  let cleanUrl = baseUrl.trim();
+  if (!/^https?:\/\//i.test(cleanUrl)) {
+    cleanUrl = "https://" + cleanUrl;
+  }
+  const baseTag = `<base href="${cleanUrl}">`;
+  if (/<head[^>]*>/i.test(html)) {
+    return html.replace(/(<head[^>]*>)/i, `$1${baseTag}`);
+  } else if (/<html[^>]*>/i.test(html)) {
+    return html.replace(/(<html[^>]*>)/i, `$1<head>${baseTag}</head>`);
+  }
+  return baseTag + html;
+}
+
 export default function Playground() {
   const router = useRouter();
 
@@ -136,6 +151,9 @@ export default function Playground() {
   const [searchQuery, setSearchQuery] = useState("nextjs 14 speeds");
   const [crawlLimit, setCrawlLimit] = useState(10);
   const [outputFormats, setOutputFormats] = useState<string[]>(["markdown"]);
+  const [onlyMainContent, setOnlyMainContent] = useState<boolean>(true);
+  const [waitForDelay, setWaitForDelay] = useState<number>(0);
+  const [mobileEmulation, setMobileEmulation] = useState<boolean>(false);
 
   // API Key Manager States
   const [savedApiKeys, setSavedApiKeys] = useState<FirecrawlKey[]>([]);
@@ -325,7 +343,15 @@ export default function Playground() {
     let endpointUrl = `/api/leanscrape/${activeTab}`;
 
     if (activeTab === "scrape") {
-      bodyPayload = { url: targetUrl, formats: outputFormats };
+      bodyPayload = { 
+        url: targetUrl, 
+        formats: outputFormats,
+        options: {
+          onlyMainContent,
+          ...(waitForDelay > 0 ? { waitFor: waitForDelay } : {}),
+          mobile: mobileEmulation
+        }
+      };
     } else if (activeTab === "search") {
       bodyPayload = { query: searchQuery, limit: 5 };
     } else if (activeTab === "crawl") {
@@ -1097,6 +1123,55 @@ Body:
                 </div>
               )}
 
+              {/* Advanced Scrape Settings */}
+              {activeTab === "scrape" && (
+                <div className="border border-border/20 bg-bg-elevated/10 p-3 rounded space-y-3 font-sans text-xs">
+                  <div className="text-[10px] font-mono text-accent uppercase tracking-wider">// ADVANCED SETTINGS</div>
+                  
+                  {/* onlyMainContent Toggle */}
+                  <label className="flex items-center justify-between cursor-pointer select-none">
+                    <span className="text-gray-300">
+                      {lang === "en" ? "Extract Only Main Content" : "Ekstrak Hanya Konten Utama"}
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={onlyMainContent}
+                      onChange={(e) => setOnlyMainContent(e.target.checked)}
+                      className="accent-primary w-4 h-4 cursor-pointer"
+                    />
+                  </label>
+                  
+                  {/* mobileEmulation Toggle */}
+                  <label className="flex items-center justify-between cursor-pointer select-none">
+                    <span className="text-gray-300">
+                      {lang === "en" ? "Mobile Device Emulation" : "Emulasi Perangkat Seluler"}
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={mobileEmulation}
+                      onChange={(e) => setMobileEmulation(e.target.checked)}
+                      className="accent-primary w-4 h-4 cursor-pointer"
+                    />
+                  </label>
+
+                  {/* waitFor Input */}
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-gray-300">
+                      {lang === "en" ? "Wait For Dynamic Load (ms)" : "Jeda Pemuatan Halaman (ms)"}
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="15000"
+                      step="500"
+                      value={waitForDelay}
+                      onChange={(e) => setWaitForDelay(Number(e.target.value))}
+                      className="w-20 text-center font-mono bg-[#08070A] border border-border rounded px-2 py-1 text-white focus:outline-none focus:border-primary text-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Crawl Limits Input */}
               {activeTab === "crawl" && (
                 <div className="space-y-2">
@@ -1360,7 +1435,7 @@ Body:
                       ) : (
                         <div className="flex-1 border border-border/20 rounded bg-white max-h-[500px] h-[500px] overflow-hidden">
                           <iframe 
-                            srcDoc={resultData?.data?.html || resultData?.html || ""}
+                            srcDoc={injectBaseHref(resultData?.data?.html || resultData?.html || "", targetUrl)}
                             className="w-full h-full border-none"
                             title="Clean HTML Preview"
                             sandbox="allow-same-origin"
@@ -1377,7 +1452,7 @@ Body:
                       ) : (
                         <div className="flex-1 border border-border/20 rounded bg-white max-h-[500px] h-[500px] overflow-hidden">
                           <iframe 
-                            srcDoc={resultData?.data?.rawHtml || resultData?.rawHtml || ""}
+                            srcDoc={injectBaseHref(resultData?.data?.rawHtml || resultData?.rawHtml || "", targetUrl)}
                             className="w-full h-full border-none"
                             title="Raw HTML Preview"
                             sandbox="allow-same-origin"
