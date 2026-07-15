@@ -114,8 +114,12 @@ function TelegramScraperContent() {
 
   // Auto scroll logs
   useEffect(() => {
-    if (logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: "smooth" });
+    try {
+      if (logsEndRef.current) {
+        logsEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    } catch (e) {
+      console.error("logs scroll error:", e);
     }
   }, [logs]);
 
@@ -705,21 +709,28 @@ function TelegramScraperContent() {
               </div>
             ) : dialogs.length > 0 ? (
               <div className="space-y-1 max-h-[300px] overflow-y-auto pr-1">
-                {dialogs.map((dg) => (
-                  <button
-                    key={dg.id}
-                    onClick={() => selectGroupFromDialog(dg.username, dg.id)}
-                    className="w-full text-left p-2 hover:bg-white/5 rounded border border-transparent hover:border-border transition-all flex flex-col gap-1 text-[10px]"
-                  >
-                    <span className="font-bold text-white line-clamp-1">{dg.title}</span>
-                    <div className="flex items-center justify-between text-[8px] text-text-muted font-mono">
-                      <span>@{dg.username || "private_id"}</span>
-                      {dg.unreadCount > 0 && (
-                        <span className="bg-primary/20 text-primary px-1.5 rounded-full">{dg.unreadCount}</span>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                {dialogs && dialogs.map((dg) => {
+                  if (!dg) return null;
+                  return (
+                    <button
+                      key={dg.id || Math.random().toString()}
+                      onClick={() => {
+                        if (dg.id) {
+                          selectGroupFromDialog(dg.username || "", dg.id);
+                        }
+                      }}
+                      className="w-full text-left p-2 hover:bg-white/5 rounded border border-transparent hover:border-border transition-all flex flex-col gap-1 text-[10px]"
+                    >
+                      <span className="font-bold text-white line-clamp-1">{dg.title || "Grup Telegram"}</span>
+                      <div className="flex items-center justify-between text-[8px] text-text-muted font-mono">
+                        <span>@{dg.username || "private_id"}</span>
+                        {dg.unreadCount > 0 && (
+                          <span className="bg-primary/20 text-primary px-1.5 rounded-full">{dg.unreadCount}</span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             ) : (
               <div className="py-6 text-center text-[10px] text-text-muted italic">
