@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { TelegramClient } from "telegram";
+import { TelegramClient, Api } from "telegram";
 import { StringSession } from "telegram/sessions";
 
 export async function POST(req: NextRequest) {
@@ -23,19 +23,25 @@ export async function POST(req: NextRequest) {
     await client.connect();
 
     try {
-      // Attempt to sign in
-      await client.signIn({
-        phoneNumber,
-        phoneCodeHash,
-        phoneCode,
-      });
+      // Attempt to sign in with pre-sent OTP code
+      const result = await client.invoke(
+        new Api.auth.SignIn({
+          phoneNumber: phoneNumber,
+          phoneCodeHash: phoneCodeHash,
+          phoneCode: phoneCode,
+        })
+      );
+      if (result && (result.className === "auth.AuthorizationSignUpRequired" || (result as any).termsOfService)) {
+        throw new Error("Pendaftaran akun Telegram baru diperlukan. Harap buat akun terlebih dahulu menggunakan aplikasi resmi Telegram sebelum masuk.");
+      }
     } catch (err: any) {
       // Check if 2FA (Two-Factor Authentication) is required
-      if (
+      const is2FA = 
         err.message?.includes("SESSION_PASSWORD_NEEDED") ||
         err.message?.includes("PASSWORD_HASH_INVALID") ||
-        err.className === "SessionPasswordNeededError"
-      ) {
+        err.className === "SessionPasswordNeededError";
+
+      if (is2FA) {
         if (!password) {
           // Tell client that 2FA password is required
           await client.disconnect();
@@ -45,10 +51,19 @@ export async function POST(req: NextRequest) {
             tempSession: tempSession,
           });
         } else {
-          // Retry sign in with 2FA password
-          await client.signIn({
-            password: password,
-          });
+          // Verify 2FA password using native GramJS method
+          await client.signInWithPassword(
+            {
+              apiId: numericApiId,
+              apiHash: apiHash,
+            },
+            {
+              password: () => password,
+              onError: (err2FA: any) => {
+                throw err2FA;
+              }
+            }
+          );
         }
       } else {
         throw err;
