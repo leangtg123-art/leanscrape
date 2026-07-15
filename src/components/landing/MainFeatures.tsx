@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Globe, RotateCw, Copy, Check, Terminal, Play } from "lucide-react";
+import { Search, Globe, RotateCw, Copy, Check, Terminal, Play, Send, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Contoh kode integrasi
@@ -82,41 +82,65 @@ export default function MainFeatures() {
           </p>
         </div>
 
-        {/* 3 Cards Side-by-Side */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {/* Card 1: Search */}
-          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
-            <div className="corner-brackets" />
-            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-              <Search size={20} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Search</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Search anything on the web in real-time and retrieve complete content formatted specifically for developer and LLM integrations.
-            </p>
-          </div>
-
-          {/* Card 2: Scrape */}
+        {/* 5 Core Feature Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+          {/* Card 1: Web Scrape */}
           <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
             <div className="corner-brackets" />
             <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
               <Globe size={20} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Scrape</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Convert single or hundreds of URLs simultaneously into clean Markdown, stripped HTML, structured JSON, or full-page screenshots.
+            <h3 className="text-base font-bold text-white mb-2">Web Scrape</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Convert URLs into clean Markdown, stripped HTML, structured JSON, or screenshots.
             </p>
           </div>
 
-          {/* Card 3: Crawl */}
+          {/* Card 2: Web Search */}
+          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
+            <div className="corner-brackets" />
+            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+              <Search size={20} />
+            </div>
+            <h3 className="text-base font-bold text-white mb-2">Web Search</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Search the web in real-time and retrieve formatted content ready for LLMs and databases.
+            </p>
+          </div>
+
+          {/* Card 3: Telegram Scraper */}
+          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
+            <div className="corner-brackets" />
+            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+              <Send size={20} />
+            </div>
+            <h3 className="text-base font-bold text-white mb-2">Telegram Scraper</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Scrape Telegram groups and download member profiles, bios, usernames, and roles.
+            </p>
+          </div>
+
+          {/* Card 4: WhatsApp Scraper */}
+          <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
+            <div className="corner-brackets" />
+            <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+              <Phone size={20} />
+            </div>
+            <h3 className="text-base font-bold text-white mb-2">WhatsApp Scraper</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Extract group name, description, size, and details directly from WhatsApp invite links.
+            </p>
+          </div>
+
+          {/* Card 5: Group Finder */}
           <div className="relative p-6 rounded-lg border border-border bg-bg-elevated/40 hover:border-primary/50 transition-all duration-300 group">
             <div className="corner-brackets" />
             <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
               <RotateCw size={20} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Crawl</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Crawl entire websites recursively and structurally. Automatically discover sub-pages, extract active links, and format all data dynamically.
+            <h3 className="text-base font-bold text-white mb-2">Group Finder</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Crawl and find thousands of public WhatsApp & Telegram invite links on the web.
             </p>
           </div>
         </div>

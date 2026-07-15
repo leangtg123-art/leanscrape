@@ -6,7 +6,7 @@ import LinkComponent from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, KeyRound, BarChart3, History, 
-  Database, LogOut, Terminal, Menu, X, ArrowLeft 
+  Database, LogOut, Terminal, Menu, X, ArrowLeft, Send, Phone, Search 
 } from "lucide-react";
 import { mockDb } from "@/lib/supabase";
 import ThemeSwitcher from "@/components/theme/ThemeSwitcher";
@@ -59,6 +59,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Telegram Scraper", href: "/dashboard/telegram", icon: Send },
+    { name: "WhatsApp Scraper", href: "/dashboard/whatsapp", icon: Phone },
+    { name: "Group Finder", href: "/dashboard/group-search", icon: Search },
     { name: "API Keys", href: "/dashboard/api-keys", icon: KeyRound },
     { name: "Usage Credits", href: "/dashboard/usage", icon: BarChart3 },
     { name: "Request History", href: "/dashboard/history", icon: History },
