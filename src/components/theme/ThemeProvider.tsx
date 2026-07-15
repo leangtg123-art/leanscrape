@@ -10,13 +10,14 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   const [transitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
-    // 1. Baca theme dari localStorage saat mount
+    // Baca theme dari localStorage saat mount
     const savedTheme = localStorage.getItem("leanscrape-theme");
     if (savedTheme) {
       setTheme(savedTheme);
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
-      // Jika first visit, tampilkan modal picker
+      // Jika first visit, set default theme dan tampilkan modal picker
+      document.documentElement.setAttribute("data-theme", "crimson-core");
       setShowPicker(true);
     }
     setMounted(true);
@@ -27,7 +28,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     if (newTheme === theme) return;
 
     setTransitioning(true);
-    
+
     // Terapkan ke HTML
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("leanscrape-theme", newTheme);
@@ -39,29 +40,27 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     }, 600);
   };
 
-  if (!mounted) {
-    return <div className="min-h-screen bg-[#0A0A0C]" />;
-  }
-
+  // KRITIS: Jangan blokir render children saat SSR/belum mount!
+  // Cukup render children langsung, hidupkan layer tema setelah mount
   return (
     <>
-      {/* Efek transisi visual */}
-      {transitioning && (
+      {/* Efek transisi visual - hanya aktif setelah mount */}
+      {mounted && transitioning && (
         <>
           <div className="theme-flash-active" />
           <div className="theme-sweep-active" />
         </>
       )}
-      
+
       {children}
-      
-      {/* Modal Picker saat kunjungan pertama */}
-      {showPicker && (
-        <ThemePickerModal 
+
+      {/* Modal Picker saat kunjungan pertama - hanya tampil setelah mount */}
+      {mounted && showPicker && (
+        <ThemePickerModal
           onSelect={(selected) => {
             changeThemeWithTransition(selected);
             setShowPicker(false);
-          }} 
+          }}
         />
       )}
     </>
