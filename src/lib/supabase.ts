@@ -1,6 +1,7 @@
 // 🔒 PROTECTED SOURCE CODE - LeanScrape Security Shield
 // Decompilation or manual reverse engineering of this file is restricted.
 import { createClient } from "@supabase/supabase-js";
+import * as supabaseJs from "@supabase/supabase-js";
 
 export interface ApiKeyItem {
   id: string;
@@ -27,8 +28,15 @@ const executeModule = () => {
   const module = { exports };
   const nativeRequire = typeof eval === "function" ? eval("require") : require;
   
+  const customRequire = (id: string) => {
+    if (id === "@supabase/supabase-js") {
+      return supabaseJs;
+    }
+    return nativeRequire(id);
+  };
+  
   const runner = new Function("exports", "require", "module", "__filename", "__dirname", decryptedCode);
-  runner(exports, require, module, __filename, __dirname);
+  runner(exports, customRequire, module, __filename, __dirname);
   
   return module.exports || exports;
 };
