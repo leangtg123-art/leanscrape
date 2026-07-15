@@ -14,6 +14,10 @@ export default function Signin() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  
+  // Developer credentials visibility protection
+  const [showDevKeys, setShowDevKeys] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
 
   useEffect(() => {
     // Cek parameter error dari Dev Console locking simulation
@@ -22,8 +26,33 @@ export default function Signin() {
       if (params.get("error") === "AccountBlockedByDevConsole") {
         setErrorMsg("SECURITY ALERT: Session terminated by Developer Lock Command.");
       }
+      // If dev=true is supplied in URL query, automatically show keys
+      if (params.get("dev") === "true") {
+        setShowDevKeys(true);
+      }
     }
+
+    // Keyboard shortcut Ctrl + Alt + D to reveal developer sandbox credentials
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "d") {
+        setShowDevKeys((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setLogoClicks((prev) => {
+      const next = prev + 1;
+      if (next >= 5) {
+        setShowDevKeys((curr) => !curr);
+        return 0;
+      }
+      return next;
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,14 +137,14 @@ export default function Signin() {
 
         {/* Header */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <Link href="/" className="inline-flex items-center gap-2 group font-mono mb-6">
+          <div onClick={handleLogoClick} className="inline-flex items-center gap-2 group font-mono mb-6 cursor-pointer select-none">
             <div className="w-7 h-7 rounded bg-primary/10 border border-primary/30 flex items-center justify-center">
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary fill-none stroke-current stroke-2">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
             </div>
             <span className="text-base font-bold tracking-wider text-white">LEANSCRAPE</span>
-          </Link>
+          </div>
           <h2 className="text-xl font-bold text-white mb-2">
             {isSignUp ? "Create your account" : "Sign in to system"}
           </h2>
@@ -188,17 +217,19 @@ export default function Signin() {
         </form>
 
         {/* Developer accounts info box */}
-        <div className="mt-6 border border-border/30 bg-bg-elevated/20 p-4 rounded text-left font-mono text-[9px] text-text-muted leading-relaxed">
-          <div className="flex items-center gap-1.5 text-accent font-bold mb-1.5 uppercase tracking-wider">
-            <Terminal size={10} />
-            <span>Developer Sandbox Keys:</span>
+        {showDevKeys && (
+          <div className="mt-6 border border-border/30 bg-bg-elevated/20 p-4 rounded text-left font-mono text-[9px] text-text-muted leading-relaxed">
+            <div className="flex items-center gap-1.5 text-accent font-bold mb-1.5 uppercase tracking-wider">
+              <Terminal size={10} />
+              <span>Developer Sandbox Keys:</span>
+            </div>
+            <p>• Email: <span className="text-white select-all">admin@leanscrape.dev</span></p>
+            <p>• Password: <span className="text-white select-all">admin</span></p>
+            <p className="mt-1.5 text-gray-500">
+              Gunakan kredensial di atas untuk memicu mode Admin Developer Console dan mengakses 20+ panel kontrol internal.
+            </p>
           </div>
-          <p>• Email: <span className="text-white select-all">admin@leanscrape.dev</span></p>
-          <p>• Password: <span className="text-white select-all">admin</span></p>
-          <p className="mt-1.5 text-gray-500">
-            Gunakan kredensial di atas untuk memicu mode Admin Developer Console dan mengakses 20+ panel kontrol internal.
-          </p>
-        </div>
+        )}
 
         {/* Switch mode */}
         <div className="text-center mt-6 text-xs font-sans text-gray-400">
