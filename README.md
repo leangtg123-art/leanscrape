@@ -1,4 +1,4 @@
-# ⚡ LeanScrape
+# ⚡ LeanScrape.vercel.app
 
 > **A high-performance visual playground and developer dashboard for Firecrawl scraping engine.**
 
